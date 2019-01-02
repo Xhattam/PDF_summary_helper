@@ -1,5 +1,9 @@
 ''' Script to download PDF and tex sources for a given PDF.
-First step of '''
+@author Jessica Tanon
+
+JAN 2019
+'''
+
 import os
 import requests
 import sys
@@ -63,6 +67,11 @@ def download(link, dest_folder, force_dl, extract=False):
 
 
 def extract_src(archive_name, dest_path):
+    """ Extract downloaded tex src archive
+
+    :param archive_name: name of archive file
+    :param dest_path: destination folder
+    """
     print("Extracting {}...".format(archive_name))
     tar = tarfile.open(archive_name)
     tar.extractall(path=dest_path)
@@ -73,8 +82,8 @@ if __name__ == "__main__":
 
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("link2pdf", type=str)
-    parser.add_argument("dest_folder", type=str)
+    parser.add_argument("link2pdf", type=str, help="Link to PRD arxiv file")
+    parser.add_argument("dest_folder", type=str, help="Destination folder")
     parser.add_argument("-force_dl", action="store_true", help="If file already exist, download again", default=False)
     args = parser.parse_args()
     main(**(vars(args)))
