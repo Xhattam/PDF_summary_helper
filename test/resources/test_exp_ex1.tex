@@ -43,6 +43,8 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \end{abstract}
 
 
+\section{Introduction}
+
 
 \begin{figure}
 \setlength{\abovecaptionskip}{0.2cm}    %调整图片标题与图距离
@@ -68,6 +70,12 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \item Extensive experiments are conducted on public datasets. Results demonstrate the effectiveness of our approach for aspect level sentiment classification.  
 \end{itemize}
 
+\section{Related Work}
+
+\subsection{Aspect Level Sentiment Classification}
+
+\subsection{Multi-task Learning}
+
 
 \begin{figure*}
 \setlength{\abovecaptionskip}{0.2cm}   %调整图片标题与图距离
@@ -78,12 +86,20 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
     \label{network}
 \end{figure*}
 
+\section{Model}
+
+\subsection{Input and Embedding Layers}
+
+\subsection{LSTM Layer}
+
 
 \begin{equation} 
 \setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
 \setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
    h_l = LSTM(h_{l-1},v_l)
 \end{equation}
+
+\subsection{Task-Specific Attention Layer}
 
 
 \begin{equation} 
@@ -101,6 +117,8 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
   \label{equation_acd_att}
 \end{equation}
 
+\subsection{Regularization Layer}
+
 
 \begin{equation} 
 \setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
@@ -115,6 +133,10 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
 	R_o = \parallel{M^{\mathrm{T}}}M - I\parallel_2
 \end{equation}
+
+\section{Experiments}
+
+\subsection{Datasets}
 
 
 \begin{table}[t!]
@@ -140,6 +162,8 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \end{center}
 \caption{\label{table-dataset} The numbers of single- and multi-aspect sentences. \emph{OL} and \emph{NOL} denote the overlapping and non-overlapping multi-aspect sentences, respectively.}	
 \end{table}
+
+\subsection{Comparison Methods}
 
 
 \begin{itemize}
@@ -182,6 +206,8 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \caption{\label{table-st} Results of the ALSC task in terms of accuracy ($\%$). All methods are run in single-task settings.}	
 \end{table}
 
+\subsection{Results}
+
 
 \begin{figure}
 \setlength{\abovecaptionskip}{0.1cm}   %调整图片标题与图距离
@@ -218,32 +244,6 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \caption{The regularization loss curves of $R_s$ and $R_o$ during the training of AT-CAN-$R_o$.} 
   \label{figure:reg-loss} 
 \end{figure}
-
-\section{Introduction}
-
-\section{Related Work}
-
-\subsection{Aspect Level Sentiment Classification}
-
-\subsection{Multi-task Learning}
-
-\section{Model}
-
-\subsection{Input and Embedding Layers}
-
-\subsection{LSTM Layer}
-
-\subsection{Task-Specific Attention Layer}
-
-\subsection{Regularization Layer}
-
-\section{Experiments}
-
-\subsection{Datasets}
-
-\subsection{Comparison Methods}
-
-\subsection{Results}
 
 \section{Conclusion}
 
