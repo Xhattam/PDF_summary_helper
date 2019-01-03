@@ -43,6 +43,7 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \end{abstract}
 
 
+
 \begin{figure}
 \setlength{\abovecaptionskip}{0.2cm}    %调整图片标题与图距离
 \setlength{\belowcaptionskip}{-0.2cm}   %调整图片标题与下文距离
@@ -51,6 +52,7 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \caption{Example of a non-overlapping sentence.} 
   \label{sentence} 
 \end{figure}
+
 
 \begin{itemize}
 \vspace{-0.2cm}
@@ -66,7 +68,6 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \item Extensive experiments are conducted on public datasets. Results demonstrate the effectiveness of our approach for aspect level sentiment classification.  
 \end{itemize}
 
-\subsection{Aspect Level Sentiment Classification}
 
 \begin{figure*}
 \setlength{\abovecaptionskip}{0.2cm}   %调整图片标题与图距离
@@ -77,50 +78,30 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
     \label{network}
 \end{figure*}
 
-\subsection{Input and Embedding Layers}
 
 \begin{equation} 
 \setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
 \setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
    h_l = LSTM(h_{l-1},v_l)
 \end{equation}
-%where $v_l$ is the input vector at time step $l$ and $h_{l-1}$ is the hidden state of the LSTM in previous time step $l-1$. 
-The size of the hidden state is also set to be $d$.
 
-\subsection{Task-Specific Attention Layer}
-Our multi-task learning framework supports both ALSC and ACD tasks. The two tasks share the hidden states from the LSTM layer, while compute their own attention weights separately. The attention weights are then used to compute aspect-specific sentence representations. 
 
-{\bf ALSC Attention Layer}
-The key idea of aspect level sentiment classification is to learn different attention weights for different aspects, so that different aspects can concentrate on different parts of the sentence. 
-%Multi-aspect sentiment analysis simultaneously handles multiple aspects by adding constraints to their attention weights. 
-We follow the approach in \cite{Bahdanau2015iclr} to compute the attention. Particularly, given the sentence $S$ with $K$ aspects, $A^s=\{A_1^s,...,A_K^s\}$, for each aspect $A_k^s$, its attention weights are calculated by:
 \begin{equation} 
 \setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
 \setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
     \alpha_k = softmax({z^a}^\mathrm{T}tanh(W_{1}^{a}{H} + W_{2}^{a}(u_k^{s}\otimes{e_L}))) 
   \label{equation_absa_att}
 \end{equation}
-where $u_k^{s}$ is the embedding of the aspect $A_k^s$, $e_L\in\mathbb{R}^{L}$ is a
-vector of $1$s, ${u_k^{s}}\otimes{e_L}$ is the operation repeatedly concatenating $u_k^{s}$ for $L$ times. $W_{1}^a\in\mathbb{R}^{{d}\times{d}}$, $W_{2}^a\in\mathbb{R}^{{d}\times{d}}$ and $z^a\in\mathbb{R}^{d}$ are the weight matrices.
 
-{\bf ACD Attention Layer} We treat the ACD task as multi-label classification problem for the set of $N$ aspect categories. For each aspect $A_n\in A$, its attention weights are calculated by:
+
 \begin{equation} 
 \setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
 \setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
     \beta_n = softmax({z^b}^\mathrm{T}tanh(W_{1}^{b}{H} + W_{2}^{b}(u_n\otimes{e_L}))) 
   \label{equation_acd_att}
 \end{equation}
-where $u_n$ is the embedding of the aspect $A_n$. $W_{1}^b\in\mathbb{R}^{{d}\times{d}}$, $W_{2}^b\in\mathbb{R}^{{d}\times{d}}$ and $z^b\in\mathbb{R}^{d}$ are the weight matrices.
 
-The ALSC and ACD tasks use the same attention mechanism, but they do not share parameters. The reason to use separated parameters is that, for the same aspect, the attention of ALSC concentrates more on opinion words, while ACD focuses more on aspect target terms (see the attention visualizations in Section~\ref{sec:att_vis}). 
-%Take Figure \ref{sentence} as an example, for the aspect \emph{food}, ALSC concentrates more on the word \emph{``great''}, while ACD puts more attention on the word \emph{``taste''}.
 
-\subsection{Regularization Layer}
-Multi-aspect sentiment analysis simultaneously handles multiple aspects by adding constraints to their attention weights. {\bf Note that this layer is only available in the training stage}, in which the ground-truth aspects are known for calculating the regularization loss, and then influence parameter updating in back propagation. While in the testing/inference stage, the true aspects are unknown and the regularization loss is not calculated so that this layer is omitted from the architecture.  
-
-In this paper, we introduce two types of regularizations: the sparse regularization on each single aspect; the orthogonal regularization on multiple non-overlapping aspects. 
-
-{\bf Sparse Regularization} For each aspect, the sparse regularization constrains the distribution of the attention weights ($\alpha_k$ or $\beta_n$) to concentrate on less words. For simplicity, we use $\alpha_k$ as an example, $\alpha_k=\{\alpha_{k1},  \alpha_{k2}, ..., \alpha_{kL}\}$. To make $\alpha_k$ sparse, the sparse regularization term is defined as: 
 \begin{equation} 
 \setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
 \setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
@@ -128,39 +109,13 @@ In this paper, we introduce two types of regularizations: the sparse regularizat
     \label{equation:sparse_reg}
 \end{equation}
 
-where $\sum\limits_{l=1}^L{\alpha_{kl}}=1$ and $\alpha_{kl}>0$. Since $\alpha_k$ is normalized as a probability distribution, $L_1$ norm is always equal to $1$ (the sum of the probabilities) and does not work as sparse regularization as usual. Minimizing Equation \ref{equation:sparse_reg} will force the sparsity of $\alpha_k$. It has the similar effect as minimizing the entropy of $\alpha_k$, which leads to placing more probabilities on less words.
 
-{\bf Orthogonal Regularization} This regularization term forces orthogonality between attention weight vectors of different aspects, so that different aspects attend on different parts of the sentence with less overlap. Note that we only apply this regularization to non-overlapping multi-aspect sentences. Assume that the sentence $S$ contains $K$ non-overlapping aspects $\{A_1^s,...,A_K^s\}$ and their attention weight vectors are $\{\alpha_1,...,\alpha_K\}$. We pack them together as a two-dimensional attention matrix $M\in\mathbb{R}^{{K}\times{L}}$ to calculate the orthogonal regularization term.
 \begin{equation}
 \setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
 \setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
 	R_o = \parallel{M^{\mathrm{T}}}M - I\parallel_2
 \end{equation}
 
-\subsection{Datasets}
-
-\begin{table}[t!]
-\begin{center}
-\setlength{\tabcolsep}{0.3mm}{
-\begin{tabular} {|c|ccc|ccc|}
-\hline
-	\multirow{2}{*}{Dataset} &  \multicolumn{3}{c|}{\#sentences} & \multicolumn{3}{c|}{\#aspects}  \\
-    \cline{2-7}
-    & \emph{Single} &  \emph{Multi} &  Total &  \emph{Single} & \emph{Multi} & Total \\
-	\hline
-		Rest14\_Train & 2053 & 482 & 2535 & 2053 & 1047 & 3100\\
-        Rest14\_Val & 412 & 94 & 506 & 412 & 201 & 613 \\
-		Rest14\_Test & 611 & 189 & 800 & 611 & 414 & 1025 \\
-        \hline
-        Rest15\_Train & 622 & 309 & 931 & 622 & 766 & 1388 \\
-        Rest15\_Val & 137 & 52 & 189 & 137 & 129 & 266 \\
-        Rest15\_Test & 390 & 192 & 582 & 390 & 455 & 845 \\
-	\hline
-\end{tabular}}
-\end{center}
-\caption{\label{table-dataset} The numbers of single-aspect and multi-aspect sentences, and the numbers of aspects in single-aspect and multi-aspect sentences.}	
-\end{table}
-\end{comment}
 
 \begin{table}[t!]
 \setlength{\abovecaptionskip}{0.1cm}   %调整图片标题与图距离
@@ -187,7 +142,6 @@ where $\sum\limits_{l=1}^L{\alpha_{kl}}=1$ and $\alpha_{kl}>0$. Since $\alpha_k$
 \end{table}
 
 
-\subsection{Comparison Methods}
 \begin{itemize}
 \item {\bf LSTM}: We implement the vanilla LSTM networks to model the sentence and use the average of all hidden states as the sentence representation. In this model, aspect information is not used.
 
@@ -200,7 +154,6 @@ where $\sum\limits_{l=1}^L{\alpha_{kl}}=1$ and $\alpha_{kl}>0$. Since $\alpha_k$
 %\vspace{-5pt}
 %\item {\bf AF-LSTM(CONV)} \cite{Tay2017Learning}: It utilizes circular convolution to compute deeper fusion relationships between each word in sentence and aspect.
 \end{itemize}
-
 
 
 \begin{table}[t!]
@@ -229,6 +182,7 @@ where $\sum\limits_{l=1}^L{\alpha_{kl}}=1$ and $\alpha_{kl}>0$. Since $\alpha_k$
 \caption{\label{table-st} Results of the ALSC task in terms of accuracy ($\%$). All methods are run in single-task settings.}	
 \end{table}
 
+
 \begin{figure}
 \setlength{\abovecaptionskip}{0.1cm}   %调整图片标题与图距离
 \setlength{\belowcaptionskip}{-0.2cm}   %调整图片标题与下文距离
@@ -245,6 +199,7 @@ where $\sum\limits_{l=1}^L{\alpha_{kl}}=1$ and $\alpha_{kl}>0$. Since $\alpha_k$
 \label{compare-att}
 \end{figure}
 
+
 \begin{figure}
 \setlength{\abovecaptionskip}{0.1cm}   %调整图片标题与图距离
 \setlength{\belowcaptionskip}{-0.4cm}   %调整图片标题与下文距离
@@ -254,6 +209,7 @@ where $\sum\limits_{l=1}^L{\alpha_{kl}}=1$ and $\alpha_{kl}>0$. Since $\alpha_k$
   \label{ACD-att} 
 \end{figure}
 
+
 \begin{figure}
 \setlength{\abovecaptionskip}{0.1cm}   %调整图片标题与图距离
 \setlength{\belowcaptionskip}{-0.5cm}   %调整图片标题与下文距离
@@ -262,5 +218,33 @@ where $\sum\limits_{l=1}^L{\alpha_{kl}}=1$ and $\alpha_{kl}>0$. Since $\alpha_k$
 \caption{The regularization loss curves of $R_s$ and $R_o$ during the training of AT-CAN-$R_o$.} 
   \label{figure:reg-loss} 
 \end{figure}
+
+\section{Introduction}
+
+\section{Related Work}
+
+\subsection{Aspect Level Sentiment Classification}
+
+\subsection{Multi-task Learning}
+
+\section{Model}
+
+\subsection{Input and Embedding Layers}
+
+\subsection{LSTM Layer}
+
+\subsection{Task-Specific Attention Layer}
+
+\subsection{Regularization Layer}
+
+\section{Experiments}
+
+\subsection{Datasets}
+
+\subsection{Comparison Methods}
+
+\subsection{Results}
+
+\section{Conclusion}
 
 \end{document}
