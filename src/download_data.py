@@ -10,8 +10,11 @@ import sys
 import wget
 import tarfile
 
+DEST_PATH = ""
+PDF_PATH = ""
 
-def main(link2pdf, dest_folder, force_dl):
+
+def downloader_main(link2pdf, dest_folder, force_dl):
     if is_valid_link(link2pdf):
         print("PDF link: {}".format(link2pdf))
     else:
@@ -21,6 +24,14 @@ def main(link2pdf, dest_folder, force_dl):
     link2src = build_tex_source_link_name(link2pdf)
     download(link2pdf, dest_folder, force_dl)
     download(link2src, dest_folder, force_dl, extract=True)
+
+
+def get_dest_path():
+    return DEST_PATH
+
+
+def get_pdf_path():
+    return PDF_PATH + ".pdf"
 
 
 def is_valid_link(link):
@@ -53,17 +64,20 @@ def download(link, dest_folder, force_dl, extract=False):
     :param extract: for the tex src, which is an gzip archive file
     """
     name = link.rsplit("/")[-1]
-    path = os.path.join(dest_folder, name)
-    if os.path.exists(path) and not force_dl:
-        print("File {} already exists, won't download again".format(path))
+    global PDF_PATH
+    PDF_PATH = os.path.join(dest_folder, name)
+    if os.path.exists(PDF_PATH) and not force_dl:
+        print("File {} already exists, won't download again".format(PDF_PATH))
     else:
         try:
             wget.download(link, out=dest_folder)
         except Exception as e:
             print("Download failed: {}".format(e))
     if extract:
-        if not os.path.exists(path + "_tex_src"):
-            extract_src(path, path + "_tex_src")
+        if not os.path.exists(PDF_PATH + "_tex_src"):
+            extract_src(PDF_PATH, PDF_PATH + "_tex_src")
+    global DEST_PATH
+    DEST_PATH = os.path.join(PDF_PATH + "_tex_src")
 
 
 def extract_src(archive_name, dest_path):
@@ -86,6 +100,6 @@ if __name__ == "__main__":
     parser.add_argument("dest_folder", type=str, help="Destination folder")
     parser.add_argument("-force_dl", action="store_true", help="If file already exist, download again", default=False)
     args = parser.parse_args()
-    main(**(vars(args)))
+    downloader_main(**(vars(args)))
 
 

@@ -1,25 +1,28 @@
-from tex2py import tex2py
-import re
-
-def run(tex_file):
-    with open(tex_file) as tex:
-        data = tex.read()
-        section_names = find_sections(data)
-        beginning = extract_beginning(data)
+from download_data import downloader_main, get_dest_path, get_pdf_path
+from parse_latex import parser_main, get_summary_path
+import subprocess
 
 
-def find_sections(data):
-    sections = re.findall(r"\\s*u*b*section{.*}|\\paragraph", data)
-    return sections
+def paper_helper_main(pdf_url, dest, force_dl):
+    downloader_main(pdf_url, dest, force_dl)
+    dest_path = get_dest_path()
+    parser_main(dest_path)
+    subprocess.Popen(["evince", get_pdf_path()])
+    subprocess.Popen(["subl", "-w", get_summary_path()]).wait()
 
 
-def extract_beginning(data):
-    d = re.findall(r'(.*?)\\section{Introduction}', data, re.S)
-    return d[0]
 
-def extract_other(data, patt="figure"):
-    d = re.findall(r'(\\begin{%s}.*?\\end{%s}'.format(patt))
+if __name__ == "__main__":
 
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("pdf_url", type=str, help="URL to PDF")
+    parser.add_argument("dest", type=str, help="Destination folder")
+    parser.add_argument("-force_dl", action="store_true", help="If file already exist, download again", default=False)
+
+    args = parser.parse_args()
+    paper_helper_main(**vars(args))
 
 '''
 1. Download src when available in latex (will contain .tex file and other files referenced in the tex source)
