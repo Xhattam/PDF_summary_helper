@@ -16,10 +16,13 @@ def get_figure(text):
 def get_all(text):
     sections = re.split(r'(\\section{.*})', text)
     header = sections[0]
+    extract_bibliography(sections[-1])
     result = [(0, header)]
     for e in get_figure(text):
         result.append((e.start(), e.group()))
     for e in get_sections(text):
+        result.append((e.start(), e.group()))
+    for e in get_references(sections[-1]):
         result.append((e.start(), e.group()))
     result.sort()
     return "\n\n".join(e[1] for e in result) + "\n\n\end{document}"
@@ -27,6 +30,10 @@ def get_all(text):
 
 def get_summary_path():
     return SUMMARY_PATH
+
+
+def get_references(content):
+    return re.finditer(r'\\biblio.*{.*}', content)
 
 
 def parser_main(dl_path):
