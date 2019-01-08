@@ -10,6 +10,7 @@ import sys
 import wget
 import tarfile
 import logging
+import subprocess
 
 DEST_PATH = ""
 PDF_PATH = ""
@@ -103,7 +104,18 @@ def download(link, dest_folder, extract=False):
             logging.error("Download failed: {}".format(e))
     if extract:
         if not os.path.exists(PDF_PATH + "_tex_src"):
-            extract_src(PDF_PATH, PDF_PATH + "_tex_src")
+            try:
+                extract_src(PDF_PATH, PDF_PATH + "_tex_src")
+            except tarfile.ReadError:
+                logging.info("No sources could be found for this article")
+                try:
+                    subprocess.Popen(["evince", get_pdf_path()])
+                except subprocess.CalledProcessError as e:
+                    try:
+                        subprocess.Popen(["open", get_pdf_path()]) # Mac OS (NOT TESTED)
+                    except subprocess.CalledProcessError:
+                        sys.exit("Cannot find PDF application, please open {} manually.".format(get_pdf_path()))
+                sys.exit(0) # Opening PDF then exiting
 
     global DEST_PATH
     DEST_PATH = os.path.join(PDF_PATH + "_tex_src")

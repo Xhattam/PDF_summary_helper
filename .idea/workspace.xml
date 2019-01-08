@@ -2,18 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5d099a9e-87f2-4688-9034-79f929290e7c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/arxiv_paper_helper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.ipynb_checkpoints/latex_parser-checkpoint.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/download_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/download_arxiv_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/latex2pdf.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/latex_parser.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/paper_helper.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parse_latex.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/parse_latex.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/run.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample-sigconf.tex" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test_exp_ex1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/download_arxiv_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/download_arxiv_data.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -60,14 +49,14 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="12" />
-          <entry key="py" value="4126" />
+          <entry key="py" value="4301" />
           <entry key="regexp" value="7" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="4126" />
+          <entry key="Python" value="4301" />
           <entry key="RegExp" value="7" />
         </counts>
       </usages-collector>
@@ -96,11 +85,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/download_arxiv_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="18" column="25" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="25" />
+            <state relative-caret-position="720">
+              <caret line="117" column="54" selection-start-line="117" selection-start-column="54" selection-end-line="117" selection-end-column="54" />
               <folding>
                 <element signature="e#97#106#0" expanded="true" />
               </folding>
@@ -122,11 +111,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/arxiv_paper_helper.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="28" column="75" selection-start-line="28" selection-start-column="75" selection-end-line="28" selection-end-column="75" />
+            <state relative-caret-position="450">
+              <caret line="30" column="100" lean-forward="true" selection-start-line="24" selection-start-column="4" selection-end-line="30" selection-end-column="100" />
               <folding>
                 <element signature="e#0#70#0" expanded="true" />
               </folding>
@@ -140,6 +129,7 @@
     <findStrings>
       <find>tmp_summary_filename</find>
       <find>_summ</find>
+      <find>extract_src</find>
       <find>get_s</find>
     </findStrings>
   </component>
@@ -152,9 +142,9 @@
         <option value="$PROJECT_DIR$/src/run.sh" />
         <option value="$PROJECT_DIR$/src/paper_helper.py" />
         <option value="$PROJECT_DIR$/src/download_data.py" />
-        <option value="$PROJECT_DIR$/src/download_arxiv_data.py" />
         <option value="$PROJECT_DIR$/src/parse_latex.py" />
         <option value="$PROJECT_DIR$/src/arxiv_paper_helper.py" />
+        <option value="$PROJECT_DIR$/src/download_arxiv_data.py" />
       </list>
     </option>
   </component>
@@ -303,6 +293,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/arxiv_paper_helper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="30" column="100" lean-forward="true" selection-start-line="24" selection-start-column="4" selection-end-line="30" selection-end-column="100" />
+          <folding>
+            <element signature="e#0#70#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/parse_latex.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -317,20 +317,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/download_arxiv_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="25" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="25" />
+        <state relative-caret-position="720">
+          <caret line="117" column="54" selection-start-line="117" selection-start-column="54" selection-end-line="117" selection-end-column="54" />
           <folding>
             <element signature="e#97#106#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/arxiv_paper_helper.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="28" column="75" selection-start-line="28" selection-start-column="75" selection-end-line="28" selection-end-column="75" />
-          <folding>
-            <element signature="e#0#70#0" expanded="true" />
           </folding>
         </state>
       </provider>
