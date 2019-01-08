@@ -2,8 +2,12 @@ import re
 import os
 import sys
 
+TEX_FILE_PATH = ""
 
-SUMMARY_PATH = ""
+
+def get_tex_path():
+    return TEX_FILE_PATH
+
 
 def get_sections(text):
     return re.finditer(r"\\(?:sub)*section{.*}", text)
@@ -29,10 +33,6 @@ def get_all(text):
     return "\n\n".join(e[1] for e in result) + "\n\n\end{document}"
 
 
-def get_summary_path():
-    return SUMMARY_PATH
-
-
 def get_references(content):
     """ Extracts bibliography. Assumption : it's in the last element of `sections`
 
@@ -43,21 +43,20 @@ def get_references(content):
 
 
 def parser_main(dl_path):
-    files_list = [e for e in os.listdir(dl_path) if e.endswith(".tex") and not e.endswith("_summary.tex")]
-    latex_content, summary_filename = None, None
+    files_list = [e for e in os.listdir(dl_path) if e.endswith(".tex")]
+    latex_content, tex_src_name = None, None
 
     for name in files_list:
         content = open(os.path.join(dl_path, name), 'r').read()
         if "\\begin{document}" in content:
             latex_content = content
-            summary_filename = re.sub(r'\.tex', '_summary.tex', name)
+            tex_src_name = name
 
     if latex_content:
+        global TEX_FILE_PATH
+        TEX_FILE_PATH = os.path.join(dl_path, tex_src_name)
         extracted_content = get_all(latex_content)
-        summary_path = os.path.join(dl_path, summary_filename)
-        global SUMMARY_PATH
-        SUMMARY_PATH = summary_path
-        with open(summary_path, 'w') as parsed_latex_output:
+        with open(TEX_FILE_PATH, 'w') as parsed_latex_output:
             parsed_latex_output.write(extracted_content)
     else:
         sys.exit("Cannot find .tex file in the specified folder: {}".format(dl_path))

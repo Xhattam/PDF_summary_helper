@@ -9,19 +9,27 @@ import requests
 import sys
 import wget
 import tarfile
+import logging
 
 DEST_PATH = ""
 PDF_PATH = ""
+logging.basicConfig(level=logging.WARN)
 
 
 def downloader_main(link2pdf, dest_folder, force_dl):
     if is_valid_link(link2pdf):
-        print("PDF link: {}".format(link2pdf))
+        logging.info("PDF link: {}".format(link2pdf))
     else:
         sys.exit("Link to {} doesn't work, please check your link".format(link2pdf))
-    print("Destination folder: {}".format(dest_folder))
+    logging.info("Destination folder: {}".format(dest_folder))
 
     link2src = build_tex_source_link_name(link2pdf)
+    if os.path.exists(dest_folder):
+        logging.error("Provided folder name already exists. Please delete it, or provide another name.")
+        sys.exit()
+    else:
+        os.mkdir(dest_folder.strip())
+
     download(link2pdf, dest_folder, force_dl)
     download(link2src, dest_folder, force_dl, extract=True)
 
@@ -61,18 +69,18 @@ def download(link, dest_folder, force_dl, extract=False):
     :param link: link to download
     :param dest_folder: destination of download
     :param force_dl: if True, will download again if the file already exists
-    :param extract: for the tex src, which is an gzip archive file
+    :param extract: option for the tex src case, which is an gzip archive file
     """
     name = link.rsplit("/")[-1]
     global PDF_PATH
     PDF_PATH = os.path.join(dest_folder, name)
     if os.path.exists(PDF_PATH) and not force_dl:
-        print("File {} already exists, won't download again".format(PDF_PATH))
+        logging.info("File {} already exists, won't download again".format(PDF_PATH))
     else:
         try:
             wget.download(link, out=dest_folder)
         except Exception as e:
-            print("Download failed: {}".format(e))
+            logging.error("Download failed: {}".format(e))
     if extract:
         if not os.path.exists(PDF_PATH + "_tex_src"):
             extract_src(PDF_PATH, PDF_PATH + "_tex_src")
@@ -86,7 +94,7 @@ def extract_src(archive_name, dest_path):
     :param archive_name: name of archive file
     :param dest_path: destination folder
     """
-    print("Extracting {}...".format(archive_name))
+    logging.info("Extracting {}...".format(archive_name))
     tar = tarfile.open(archive_name)
     tar.extractall(path=dest_path)
     tar.close()

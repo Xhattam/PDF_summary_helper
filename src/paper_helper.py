@@ -1,5 +1,5 @@
 from download_data import downloader_main, get_dest_path, get_pdf_path
-from parse_latex import parser_main, get_summary_path
+from parse_latex import parser_main, get_tex_path
 import subprocess
 
 
@@ -8,7 +8,7 @@ def paper_helper_main(pdf_url, dest, force_dl):
     dest_path = get_dest_path()
     parser_main(dest_path)
     subprocess.Popen(["evince", get_pdf_path()])
-    subprocess.Popen(["subl", "-w", get_summary_path()]).wait()
+    subprocess.Popen(["subl", "-w", get_tex_path()]).wait()
 
 
 
@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("pdf_url", type=str, help="URL to PDF")
-    parser.add_argument("dest", type=str, help="Destination folder")
+    parser.add_argument("dest", type=str, help="Name of folder to save data to (will be created if it doesn't exist)")
     parser.add_argument("-force_dl", action="store_true", help="If file already exist, download again", default=False)
 
     args = parser.parse_args()
