@@ -1,3 +1,12 @@
+""" Script to parse a latex file and extract main info (title, authors, abstract...), section names, and specific latex
+elements such as formulas or tables.
+
+@author Jessica Tanon
+
+JAN 2019
+"""
+
+
 import re
 import os
 import sys
@@ -6,18 +15,38 @@ TEX_FILE_PATH = ""
 
 
 def get_tex_path():
+    """ Gets latex file abs path
+
+    :return: latex source file absolute path
+    """
     return TEX_FILE_PATH
 
 
 def get_sections(text):
+    """ Finds all section and subsections names in the latex file
+
+    :param text: content of the latex file
+    :return: iterator with section/subsection names, in latex format: `\section{section name}`
+    """
     return re.finditer(r"\\(?:sub)*section{.*}", text)
 
 
 def get_figure(text):
+    """ Extracts specific latex elements (currently, figure, itemize, equation, table and enumerate sections)
+
+    :param text: content of the latex file
+    :return: iterator with all specific elements and their content, in latex format
+    """
     return re.finditer(r'((?<!\\begin{comment})\s\\begin{(?P<sec>(?:figure\*{0,1}|itemize|equation|table|enumerate))}(?:.*?)\\end{(?P=sec)})', text, re.S)
 
 
 def get_all(text):
+    """ Creates blueprint of original latex src
+    Calls all extraction functions. Gets header, content, and references. Adds a `\end{document}` at the end
+
+    :param text: latex file content
+    :return: blueprint of latex source file, ready to be written to output and edited and/or compiled in latex
+    """
     sections = re.split(r'(\\section{.*})', text)
     header = sections[0]
     result = [(0, header)]
@@ -26,6 +55,9 @@ def get_all(text):
     for e in get_sections(text):
         result.append((e.start(), e.group()))
     result.sort()
+
+    # extraction on a small part of the latex source restarts the regex matches position numbering.
+    # this is a trick to make sure the bibliography lines are at the end of the document.
     fake_start = result[-1][0] + 1
     for e in get_references(sections[-1]):
         result.append((fake_start, e.group()))
@@ -43,6 +75,10 @@ def get_references(content):
 
 
 def parser_main(dl_path):
+    """ Finds tex source file. Parses its content. Overwrites source with blueprint.
+
+    :param dl_path: PDF URL
+    """
     files_list = [e for e in os.listdir(dl_path) if e.endswith(".tex")]
     latex_content, tex_src_name = None, None
 
@@ -65,7 +101,7 @@ def parser_main(dl_path):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Small latex parser, to extract skeleton of a latex file.")
     parser.add_argument("dl_path", type=str, help="Path to downloaded sources")
     args = parser.parse_args()
     parser_main(**vars(args))
