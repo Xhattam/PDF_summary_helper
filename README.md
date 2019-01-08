@@ -46,6 +46,8 @@ Evince and Sublime text are the default applications to open the PDF and the `te
 
 This is a python3 script.
 
+This is a **WORK IN PROGRESS**, any suggestions/bug reports/PR welcome !
+
 USAGE
 =====
 
