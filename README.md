@@ -48,6 +48,13 @@ This is a python3 script.
 
 This is a **WORK IN PROGRESS**, any suggestions/bug reports/PR welcome !
 
+Work in progress - planned modifications
+----------------
+
+- option to select specific latex sections to extract (*itemize*, *equation*...)
+- Mac OS compatibility
+- make `bibliography`/`abstract` extraction optional
+
 USAGE
 =====
 
