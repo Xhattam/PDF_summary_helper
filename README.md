@@ -74,7 +74,7 @@ from the **/src** folder :
 
 Once you've been through the article and took the notes you wanted in the new (overwritten) `arvice_article.tex` file, provided there are no syntax errors, you can create a PDF of your notes with
 
-`pdflatex arxiv-article.tex`
+`pdflatex arxiv_article.tex`
 
 This file will read the bibliography/images files from the `arxiv_article_tex_src` folder, and build a clean PDF.
 
