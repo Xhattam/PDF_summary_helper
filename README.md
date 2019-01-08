@@ -52,6 +52,8 @@ Work in progress - planned modifications
 - option to select specific latex sections to extract (*itemize*, *equation*...)
 - Mac OS compatibility
 - make `bibliography`/`abstract` extraction optional
+- better paths (abs or not) handling
+- thorough error handling and fallback when possible
 
 USAGE
 =====
