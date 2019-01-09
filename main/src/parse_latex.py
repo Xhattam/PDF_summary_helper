@@ -35,7 +35,7 @@ def get_sections(text):
     \citet{HasselqvistHK17} and \citet{McCannKXS18} 
     This is matched instead of just paragraph{.*} because of the following \cite{} elements
     """
-    return [(e.start(), e.group().split("}")[0] + "}") for e in tmp]
+    return [(e.start(), e.group().strip().split("}")[0] + "}") for e in tmp]
 
 
 def get_figure(text):
@@ -56,10 +56,10 @@ def get_all(text):
     :return: blueprint of latex source file, ready to be written to output and edited and/or compiled in latex
     """
     sections = re.split(r'(\\section{.*})', text)
-    header = sections[0]
+    header = sections[0].strip()
     result = [(0, header)]
     for e in get_figure(text):
-        result.append((e.start(), e.group()))
+        result.append((e.start(), e.group().strip()))
     for e in get_sections(text):
         result.append(e)
     result.sort()
@@ -70,7 +70,7 @@ def get_all(text):
     for e in get_references(sections[-1]):
         result.append((fake_start, e.group()))
         fake_start += 1
-    return "\n\n".join(e[1] for e in result) + "\n\n\end{document}"
+    return "\n\n".join(e[1] for e in result).strip() + "\n\n\end{document}\n"
 
 
 def get_references(content):

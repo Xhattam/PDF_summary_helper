@@ -22,9 +22,6 @@ except IOError as e:
 
 class TestParser(unittest.TestCase):
 
-    def test(self):
-        self.assertTrue(True)
-
     def test_sections_extractor_ex1(self):
         expected_sections = [
             "\section{Introduction}",
@@ -88,3 +85,13 @@ class TestParser(unittest.TestCase):
 
         extracted = [e[1] for e in pl.get_sections(ORIG2)]
         self.assertListEqual(expected, extracted)
+
+    def test_extract_all_ex1(self):
+        extracted_content = pl.get_all(ORIG1)
+        self.assertEqual(extracted_content, EXP1)
+
+    def test_extract_all_ex2(self):
+        self.maxDiff = None
+        extracted_content = pl.get_all(ORIG2)
+        self.assertEqual(extracted_content, EXP2)
+
