@@ -23,8 +23,7 @@ logging.basicConfig(level=logging.INFO)
 def arxiv_downloader_main(pdf_url):
     """ Creates needed folders and downloads data
 
-    :param pdf_url: URL to pdf file on arxiv
-    """
+    :param pdf_url: URL to pdf file on arxiv """
 
     if _is_valid_link(pdf_url):
         logging.info("PDF link: {}".format(pdf_url))
@@ -38,8 +37,7 @@ def arxiv_downloader_main(pdf_url):
 def _build_paths(pdf_url):
     """ Creates paths to needed resources
 
-    :param pdf_url: URL to PDF file
-    """
+    :param pdf_url: URL to PDF file """
 
     # Extracting names for folders to be created
     dl_folder_path      = get_download_folder()                         # Getting local Download folder
@@ -99,13 +97,16 @@ def get_pdf_path():
 
 
 def get_latex_src_path():
+    """ Returns latex sources folder path """
     return LOCAL_LATEX_SRC_PATH
 
 
 def _is_valid_link(link, check_src=False):
     """ Checks if the URL provided to the PDF file is valid
 
-    :param link: link to the PDF file, e.g. `https://arxiv.org/pdf/1812.11928.pdf` """
+    :param link: link to the PDF file, e.g. `https://arxiv.org/pdf/1812.11928.pdf`
+    :param check_src: make sure the link isn't a redirection to a pdf, but leads to an archiv file """
+
     logging.info("Checking link validity...")
     request = requests.get(link)
     if request.status_code == 200:
@@ -122,14 +123,18 @@ def _build_tex_source_link_name(pdf_dl_link):
     """ Builds tex source folder download link from the pdf link
 
     :param pdf_dl_link: pdf download link
-    :return: tex src folder download link
-    """
+    :return: tex src folder download link """
+
     base = "https://arxiv.org/e-print/"
     pdf_no_ext = pdf_dl_link.rsplit("/")[-1].rsplit(".", 1)[0]
     return base + pdf_no_ext
 
 
 def _download_pdf(pdf_url):
+    """ Downloads the pdf article
+
+    :param pdf_url: url to arxiv pdf file """
+
     if exists(LOCAL_PDF_PATH):
         logging.info("PDF file already exists, won't download again")
     else:
@@ -141,6 +146,9 @@ def _download_pdf(pdf_url):
 
 
 def _download_latex_sources(latex_src_url):
+    """ Downloads the archive for the latex sources
+
+    :param latex_src_url: url to archive folder """
 
     if exists(join(LOCAL_LATEX_SRC_PATH, ARCHIVE_NAME)):
         logging.info("Latex sources already exist, won't download again")
@@ -158,10 +166,12 @@ def _download_latex_sources(latex_src_url):
 
 
 def _download_data(pdf_url):
+    """ Downloads everything if available (pdf + latex sources)
+
+    :param pdf_url: url to arxiv pdf (used to build link to archive file for sources) """
     _download_pdf(pdf_url)
     latex_src_url = _build_tex_source_link_name(pdf_url)
     _download_latex_sources(latex_src_url)
-    print("SRC: ", LOCAL_LATEX_SRC_PATH)
     if LOCAL_LATEX_SRC_PATH != "":
         _extract_src()
 
