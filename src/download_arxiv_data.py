@@ -17,6 +17,7 @@ from arxiv_downloader_helper import get_download_folder
 LOCAL_LATEX_SRC_PATH = ""
 LOCAL_PDF_PATH = ""
 DEST_PATH = ""
+ARCHIVE_NAME = ""
 logging.basicConfig(level=logging.INFO)
 
 
@@ -33,9 +34,7 @@ def arxiv_downloader_main(pdf_url):
         sys.exit("Link to {} doesn't work, please check your link".format(pdf_url))
 
     build_paths(pdf_url)
-
-    download(pdf_url)
-    download(pdf_url, extract=True)
+    download_data(pdf_url)
 
 
 def build_paths(pdf_url):
@@ -56,6 +55,7 @@ def build_paths(pdf_url):
     set_dest_path(join(dl_folder_path, dest_folder_name))   # .../Downloads/1987_1234
     set_src_path(src_folder_path)                           # .../Downloads/1987_1234/1987_1234_tex_src
     set_pdf_path(pdf_name)                                  # .../Downloads/1987_1234/1987.1234.pdf
+    set_archive_name(pdf_name)
 
     logging.info("Trying to build destination folder...")
     try:
@@ -85,6 +85,10 @@ def set_src_path(tex_src_name):
     LOCAL_LATEX_SRC_PATH = join(DEST_PATH, tex_src_name)
 
 
+def set_archive_name(pdf_name):
+    global ARCHIVE_NAME
+    ARCHIVE_NAME = pdf_name.rsplit(".", 1)[0]
+
 
 def get_dest_path():
     """ Returns destination folder absolute path
@@ -104,6 +108,10 @@ def get_pdf_path():
 
 def get_latex_src_path():
     return LOCAL_LATEX_SRC_PATH
+
+
+def get_archive_name():
+    return ARCHIVE_NAME
 
 
 def is_valid_link(link, check_src=False):
@@ -134,66 +142,52 @@ def build_tex_source_link_name(pdf_dl_link):
 
 
 def download_pdf(pdf_url):
-    try:
-        wget.download(pdf_url, out=DEST_PATH)
-    except Exception as e:
-        logging.error("Cannot download PDF file !")
-        sys.exit(e)
-
-
-def download(link, dest_folder, extract=False):
-    """ Downloads PDF or tex source gzip folder with wget
-
-    :param link: link to download
-    :param dest_folder: destination of download
-    :param extract: option for the tex src case, which is an gzip archive file
-    """
-
-    if os.path.exists(LOCAL_PDF_PATH):
-        logging.info("File {} already exists, won't download again".format(LOCAL_PDF_PATH))
+    if exists(LOCAL_PDF_PATH):
+        logging.info("PDF file already exists, won't download again")
     else:
         try:
-            if extract:
-                msg = "Downloading latex sources..."
-                out = LOCAL_LATEX_SRC_PATH
-            else:
-                msg = "Downloading PDF..."
-                out = DEST_PATH
-
-            logging.info(msg)
-            wget.download(link, out=out)
-            logging.info("OK --- Downloaded {} to {}".format(link, out))
+            wget.download(pdf_url, out=DEST_PATH)
         except Exception as e:
-            logging.error("Download failed: {}".format(e))
+            logging.error("Cannot download PDF file : {}".format(e))
+            sys.exit(0)
 
-    if extract:
-        if not os.path.exists(LOCAL_PDF_PATH + "_tex_src"):
+
+def download_latex_sources(latex_src_url):
+    print("PATHS:")
+    print(LOCAL_LATEX_SRC_PATH)
+    print(ARCHIVE_NAME)
+    if exists(join(LOCAL_LATEX_SRC_PATH, ARCHIVE_NAME)):
+        logging.info("Latex sources already exist, won't download again")
+    else:
+        if is_valid_link(latex_src_url):
             try:
-                extract_src(LOCAL_PDF_PATH + "_tex_src")
-            except tarfile.ReadError:
-                logging.info("No sources could be found for this article")
-                try:
-                    subprocess.Popen(["evince", get_pdf_path()])
-                except subprocess.CalledProcessError as e:
-                    try:
-                        subprocess.Popen(["open", get_pdf_path()]) # Mac OS (NOT TESTED)
-                    except subprocess.CalledProcessError:
-                        sys.exit("Cannot find PDF application, please open {} manually.".format(get_pdf_path()))
-                sys.exit(0) # Opening PDF then exiting
-    #
-    # global DEST_PATH
-    # DEST_PATH = os.path.join(PDF_PATH + "_tex_src")
+                wget.download(latex_src_url, out=LOCAL_LATEX_SRC_PATH)
+            except Exception as e:
+                logging.error("Download failed: {}".format(e))
+        else:
+            set_src_path("") # Emptying sources path
+            logging.info("There are no sources available for this PDF file.")
 
 
-def extract_src(archive_name, dest_path):
+def download_data(pdf_url):
+    download_pdf(pdf_url)
+    latex_src_url = build_tex_source_link_name(pdf_url)
+    download_latex_sources(latex_src_url)
+    if LOCAL_LATEX_SRC_PATH != "":
+        extract_src()
+
+
+def extract_src():
     """ Extract downloaded tex src archive
 
     :param archive_name: name of archive file
     :param dest_path: destination folder
     """
-    logging.info("Extracting {}...".format(archive_name))
-    tar = tarfile.open(archive_name)
-    tar.extractall(path=dest_path)
+    logging.info("Extracting {}...".format(ARCHIVE_NAME))
+    tar = tarfile.open(join(LOCAL_LATEX_SRC_PATH, ARCHIVE_NAME))
+    tar.extractall(path=join(LOCAL_LATEX_SRC_PATH))
+    logging.info("Removing archive file...")
+    os.remove(join(LOCAL_LATEX_SRC_PATH, ARCHIVE_NAME))
     tar.close()
 
 
@@ -201,7 +195,6 @@ if __name__ == "__main__":
 
     import argparse
     parser = argparse.ArgumentParser(description="Downloader for arxiv PDF and latex source files")
-    parser.add_argument("link2pdf", type=str, help="Link to PRD arxiv file")
-    parser.add_argument("dest_folder", type=str, help="Destination folder")
+    parser.add_argument("pdf_url", type=str, help="Link to PRD arxiv file")
     args = parser.parse_args()
     arxiv_downloader_main(**(vars(args)))
