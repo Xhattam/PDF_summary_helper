@@ -10,39 +10,35 @@ import sys
 import wget
 import tarfile
 import logging
-import subprocess
-from os.path import exists, join, isabs, abspath
+from os.path import exists, join
 from arxiv_downloader_helper import get_download_folder
 
-LOCAL_LATEX_SRC_PATH = ""
-LOCAL_PDF_PATH = ""
-DEST_PATH = ""
-ARCHIVE_NAME = ""
+LOCAL_LATEX_SRC_PATH    = ""    # latex sources folder path
+LOCAL_PDF_PATH          = ""    # pdf file path
+DEST_PATH               = ""    # folder containing pdf and latex sources
+ARCHIVE_NAME            = ""    # name of archive containing latex sources before extraction
 logging.basicConfig(level=logging.INFO)
 
 
 def arxiv_downloader_main(pdf_url):
-    """ Calls download functions with correct arguments depending on the download type (pdf, latex sources)
+    """ Creates needed folders and downloads data
 
     :param pdf_url: URL to pdf file on arxiv
-    :param dest_folder: name of folder that will be created as a download destination
     """
 
-    if is_valid_link(pdf_url):
+    if _is_valid_link(pdf_url):
         logging.info("PDF link: {}".format(pdf_url))
     else:
         sys.exit("Link to {} doesn't work, please check your link".format(pdf_url))
 
-    build_paths(pdf_url)
-    download_data(pdf_url)
+    _build_paths(pdf_url)
+    _download_data(pdf_url)
 
 
-def build_paths(pdf_url):
-    """ if isabs and exists : write files inside of it
-    if isabs and doesn't exist : create folder and write inside of it
-    if not is abs: create folder in Downloads, define absath
-    :param dest_path:
-    :return:
+def _build_paths(pdf_url):
+    """ Creates paths to needed resources
+
+    :param pdf_url: URL to PDF file
     """
 
     # Extracting names for folders to be created
@@ -52,57 +48,53 @@ def build_paths(pdf_url):
     src_folder_path     = dest_folder_name + "_tex_src"                 # 1987_1234_tex_src
 
     # Setting global variables
-    set_dest_path(join(dl_folder_path, dest_folder_name))   # .../Downloads/1987_1234
-    set_src_path(src_folder_path)                           # .../Downloads/1987_1234/1987_1234_tex_src
-    set_pdf_path(pdf_name)                                  # .../Downloads/1987_1234/1987.1234.pdf
-    set_archive_name(pdf_name)
+    _set_dest_path(join(dl_folder_path, dest_folder_name))   # .../Downloads/1987_1234
+    _set_src_path(src_folder_path)                           # .../Downloads/1987_1234/1987_1234_tex_src
+    _set_pdf_path(pdf_name)                                  # .../Downloads/1987_1234/1987.1234.pdf
+    _set_archive_name(pdf_name)                              # 1987.1234
 
-    logging.info("Trying to build destination folder...")
     try:
         os.mkdir(DEST_PATH)
     except OSError as err:
         logging.error("Cannot create destination folder : {}".format(err))
         sys.exit(0)
-    logging.info("OK --- Created destination folder at {}".format(DEST_PATH))
+    logging.info("SUCCESS --- Created destination folder at {}".format(DEST_PATH))
 
-    logging.info("Creating latex source folder...")
-    os.mkdir(LOCAL_LATEX_SRC_PATH)
-    logging.info("OK --- Latex source folder created at {}".format(LOCAL_LATEX_SRC_PATH))
+    # os.mkdir(LOCAL_LATEX_SRC_PATH)
+    # logging.info("SUCCESS --- Created latex source folder at {}".format(LOCAL_LATEX_SRC_PATH))
 
 
-def set_dest_path(dest_path):
+def _set_dest_path(dest_path):
+    """ Sets main destination folder path """
     global DEST_PATH
     DEST_PATH = dest_path
 
 
-def set_pdf_path(pdf_name):
+def _set_pdf_path(pdf_name):
+    """ Sets PDF file path """
     global LOCAL_PDF_PATH
     LOCAL_PDF_PATH = join(DEST_PATH, pdf_name)
 
 
-def set_src_path(tex_src_name):
+def _set_src_path(tex_src_name):
+    """ Sets latex sources folder path """
     global LOCAL_LATEX_SRC_PATH
     LOCAL_LATEX_SRC_PATH = join(DEST_PATH, tex_src_name)
 
 
-def set_archive_name(pdf_name):
+def _set_archive_name(pdf_name):
+    """ Sets archive file name """
     global ARCHIVE_NAME
     ARCHIVE_NAME = pdf_name.rsplit(".", 1)[0]
 
 
 def get_dest_path():
-    """ Returns destination folder absolute path
-
-    :return: Destination folder absolute path
-    """
+    """ Returns destination folder absolute path """
     return DEST_PATH
 
 
 def get_pdf_path():
-    """ Returns the PDF abs path
-
-    :return: PDF absolute file path
-    """
+    """ Returns the PDF abs path """
     return LOCAL_PDF_PATH
 
 
@@ -110,11 +102,7 @@ def get_latex_src_path():
     return LOCAL_LATEX_SRC_PATH
 
 
-def get_archive_name():
-    return ARCHIVE_NAME
-
-
-def is_valid_link(link, check_src=False):
+def _is_valid_link(link, check_src=False):
     """ Checks if the URL provided to the PDF file is valid
 
     :param link: link to the PDF file, e.g. `https://arxiv.org/pdf/1812.11928.pdf` """
@@ -130,7 +118,7 @@ def is_valid_link(link, check_src=False):
     return False
 
 
-def build_tex_source_link_name(pdf_dl_link):
+def _build_tex_source_link_name(pdf_dl_link):
     """ Builds tex source folder download link from the pdf link
 
     :param pdf_dl_link: pdf download link
@@ -141,7 +129,7 @@ def build_tex_source_link_name(pdf_dl_link):
     return base + pdf_no_ext
 
 
-def download_pdf(pdf_url):
+def _download_pdf(pdf_url):
     if exists(LOCAL_PDF_PATH):
         logging.info("PDF file already exists, won't download again")
     else:
@@ -152,32 +140,33 @@ def download_pdf(pdf_url):
             sys.exit(0)
 
 
-def download_latex_sources(latex_src_url):
-    print("PATHS:")
-    print(LOCAL_LATEX_SRC_PATH)
-    print(ARCHIVE_NAME)
+def _download_latex_sources(latex_src_url):
+
     if exists(join(LOCAL_LATEX_SRC_PATH, ARCHIVE_NAME)):
         logging.info("Latex sources already exist, won't download again")
     else:
-        if is_valid_link(latex_src_url):
+        if _is_valid_link(latex_src_url, check_src=True):
+            os.mkdir(LOCAL_LATEX_SRC_PATH)
+            logging.info("SUCCESS --- Created latex source folder at {}".format(LOCAL_LATEX_SRC_PATH))
             try:
                 wget.download(latex_src_url, out=LOCAL_LATEX_SRC_PATH)
             except Exception as e:
                 logging.error("Download failed: {}".format(e))
         else:
-            set_src_path("") # Emptying sources path
+            _set_src_path("") # Emptying sources path
             logging.info("There are no sources available for this PDF file.")
 
 
-def download_data(pdf_url):
-    download_pdf(pdf_url)
-    latex_src_url = build_tex_source_link_name(pdf_url)
-    download_latex_sources(latex_src_url)
+def _download_data(pdf_url):
+    _download_pdf(pdf_url)
+    latex_src_url = _build_tex_source_link_name(pdf_url)
+    _download_latex_sources(latex_src_url)
+    print("SRC: ", LOCAL_LATEX_SRC_PATH)
     if LOCAL_LATEX_SRC_PATH != "":
-        extract_src()
+        _extract_src()
 
 
-def extract_src():
+def _extract_src():
     """ Extract downloaded tex src archive
 
     :param archive_name: name of archive file
