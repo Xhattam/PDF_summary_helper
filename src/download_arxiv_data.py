@@ -49,8 +49,8 @@ def _build_paths(pdf_url):
 
     # Setting global variables
     _set_dest_path(join(dl_folder_path, dest_folder_name))   # .../Downloads/1987_1234
-    _set_src_path(src_folder_path)                           # .../Downloads/1987_1234/1987_1234_tex_src
-    _set_pdf_path(pdf_name)                                  # .../Downloads/1987_1234/1987.1234.pdf
+    _set_src_path(join(DEST_PATH, src_folder_path))          # .../Downloads/1987_1234/1987_1234_tex_src
+    _set_pdf_path(join(DEST_PATH, pdf_name))                 # .../Downloads/1987_1234/1987.1234.pdf
     _set_archive_name(pdf_name)                              # 1987.1234
 
     try:
@@ -73,13 +73,13 @@ def _set_dest_path(dest_path):
 def _set_pdf_path(pdf_name):
     """ Sets PDF file path """
     global LOCAL_PDF_PATH
-    LOCAL_PDF_PATH = join(DEST_PATH, pdf_name)
+    LOCAL_PDF_PATH = pdf_name
 
 
 def _set_src_path(tex_src_name):
     """ Sets latex sources folder path """
     global LOCAL_LATEX_SRC_PATH
-    LOCAL_LATEX_SRC_PATH = join(DEST_PATH, tex_src_name)
+    LOCAL_LATEX_SRC_PATH = tex_src_name
 
 
 def _set_archive_name(pdf_name):
@@ -153,8 +153,8 @@ def _download_latex_sources(latex_src_url):
             except Exception as e:
                 logging.error("Download failed: {}".format(e))
         else:
-            _set_src_path("") # Emptying sources path
             logging.info("There are no sources available for this PDF file.")
+            _set_src_path("") # Emptying sources path
 
 
 def _download_data(pdf_url):
