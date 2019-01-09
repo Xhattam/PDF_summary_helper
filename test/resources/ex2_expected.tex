@@ -74,7 +74,18 @@ on two tasks with different answer styles.
 \label{fig:mixratio}
 \end{figure}
 
+\paragraph{Multi-source abstractive summarization based RC.}
+
+\paragraph{Style-controllable RC.}
+
 \section{Problem Formulation}
+
+\begin{problem}
+\label{prob:prob}
+Given a question with $J$ words $x^q = \{x^q_1, \ldots, x^q_J\}$, a set of $K$ passages, where each $k$-th passage is composed of $L$ words $x^{p_k} = \{x^{p_k}_1, \ldots, x^{p_k}_{L}\}$, and an answer style $s$, an RC system %distinguishes whether the question is answered on the basis of the provided passages and 
+outputs an answer $y = \{y_1, \ldots, y_T \}$ conditioned on the style.
+%when the question can be answered.
+\end{problem}
 
 \section{Proposed Model} 
 
@@ -85,25 +96,80 @@ on two tasks with different answer styles.
 \label{fig:model}
 \end{figure}
 
+\begin{layer1}
+The \textbf{question-passages reader} (\S\ref{sec:reader}) models interactions between the question and passages.
+\end{layer1}
+
+\begin{layer1}
+The \textbf{passage ranker} (\S\ref{sec:ranker}) finds relevant passages to the question.
+\end{layer1}
+
+\begin{layer1}
+The \textbf{answer possibility classifier} (\S\ref{sec:classifier}) identifies answerable questions.
+\end{layer1}
+
+\begin{layer1}
+The \textbf{answer sentence decoder} (\S\ref{sec:decoder}) outputs a sequence of words conditioned on the style.
+\end{layer1}
+
 \subsection{Question-Passages Reader}
 
 \subsubsection{Word Embedding Layer}
 
 \subsubsection{Shared Encoder Layer}
 
+\paragraph{Transformer encoder block.}
+
 \subsubsection{Dual Attention Layer}
+
+\begin{align}
+U^{p_k}_{lj} = {w^a}^\top [ E^{p_k}_l; E^q_j; E^{p_k}_l \odot E^q_j ]
+\end{align}
+
+\begin{align}
+\nonumber
+[E^{p_k}; \bar{A}^{p_k}; \bar{\bar{A}}^{p_k}; E^{p_k} \odot \bar{A}^{p_k}; E^{p_k} \odot \bar{\bar{A}}^{p_k}] 
+\end{align}
+
+\begin{align}
+\begin{split}
+\nonumber
+& [ E^{q} ; \max_k(\bar{B}^{p_k}); \max_k(\bar{\bar{B}}^{p_k}); \\
+&\hspace{1em} E^{q} \odot \max_k(\bar{B}^{p_k}); E^{q} \odot \max_k(\bar{\bar{B}}^{p_k})  ] \mathrm{\ \ where}
+\end{split}\\
+\nonumber
+&\bar{A}^{p_k} =  E^q A^{p_k}\in \mathbb{R}^{d \times L}, \ 
+\bar{B}^{p_k} =  E^{p_k} B^{p_k} \in \mathbb{R}^{d \times J} \\
+\nonumber
+&\bar{\bar{A}}^{p_k} = \bar{B}^{p_k} A^{p_k} \in \mathbb{R}^{d \times L}, \ 
+\bar{\bar{B}}^{p_k} = \bar{A}^{p_k} B^{p_k} \in \mathbb{R}^{d \times J}.
+\end{align}
 
 \subsubsection{Modeling Encoder Layer}
 
 \subsection{Passage Ranker}
 
+\begin{align}
+\beta^{p_k} = \mathrm{sigmoid}({w^r}^\top M^{p_k}_1),
+\end{align}
+
 \subsection{Answer Possibility Classifier}
+
+\begin{align}
+P(a) = \mathrm{sigmoid}({w^c}^\top [M^{p_1}_1; \ldots; M^{p_K}_1]),
+\end{align}
 
 \subsection{Answer Sentence Decoder}
 
 \subsubsection{Word Embedding Layer}
 
 \subsubsection{Attentional Decoder Layer}
+
+\paragraph{Transformer decoder block.}
+
+\begin{align}
+M^{p_\mathrm{all}} = [M^{p_1}, \ldots, M^{p_K}] \in \mathbb{R}^{d \times KL}.
+\end{align}
 
 \subsubsection{Multi-source Pointer-Generator}
 
@@ -114,9 +180,74 @@ on two tasks with different answer styles.
 \label{fig:copy}
 \end{figure}
 
+\paragraph{Extended vocabulary distribution.}
+
+\begin{align}
+P^v(y_t)  =\mathrm{softmax}({W^2}^\top (W^1 s_t  + b^1)),
+\end{align}
+
+\paragraph{Copy distribution.}
+
+\begin{align}
+e^q_j &= {w^q}^\top \tanh(W^{qm} M_j^q + W^{qs} s_t +b^q), \\
+\alpha^q_t &= \mathrm{softmax}(e^q), \\ 
+c^q_t &= \textstyle \sum_j \alpha^q_{tj} M_j^q, \\
+%\end{align}
+%\begin{align}
+e^{p_k}_l &= {w^p}^\top \tanh(W^{pm} M_l^{p_k} + W^{ps} s_t +b^p), \\
+\alpha^p_t &= \mathrm{softmax}([e^{p_1}; \ldots; e^{p_K}]), \\
+c^p_t &=  \textstyle \sum_{l} \alpha^p_{tl} M^{p_\mathrm{all}}_{l}, 
+\end{align}
+
+\begin{align}
+P^q(y_t) &=  \textstyle \sum_{j: x^q_j = y_t} \alpha^q_{tj}, \\
+P^p(y_t) &= \textstyle \sum_{l: x^{p_{k(l)}}_{l} = y_t} \alpha^p_{tl},
+\end{align}
+
+\paragraph{Final distribution.}
+
+\begin{align}
+P(y_t) = \lambda^v P^v(y_t) +  \lambda^q P^q(y_t) + \lambda^p P^p(y_t),
+\end{align}
+
+\begin{align}
+\lambda^v, \lambda^q, \lambda^p = \mathrm{softmax}(W^m [s_t; c^q_t; c^p_t] + b^m).
+\end{align}
+
 \subsubsection{Combined Attention}
 
+\begin{align}
+\alpha^p_{tl} & := \frac{\alpha^p_{tl} \beta^{p_{k(l)} }}{\sum_{l'} \alpha^p_{tl'} \beta^{p_{k(l')}}}.
+\end{align}
+
 \subsection{Loss Function}
+
+\begin{align}
+L(\theta) = L_\mathrm{dec} + \gamma_\mathrm{rank} L_\mathrm{rank} + \gamma_\mathrm{cls} L_\mathrm{cls}
+\end{align}
+
+\begin{align}
+L_\mathrm{dec} = - \frac{1}{N_\mathrm{able}}\sum_{(a,y)\in \mathcal{D}} \frac{a}{T} \sum_t \log P(y_{t}),
+\end{align}
+
+\begingroup\makeatletter\def\f@size{9.5}\check@mathfonts
+\begin{gather}
+L_\mathrm{rank} = -  \frac{1}{NK} \sum_k \sum_{r^{p_k}\in\mathcal{D}}  
+\biggl(
+\begin{split}
+&r^{p_k} \log \beta^{p_k} +  \\
+&(1-r^{p_k}) \log (1-\beta^{p_k}) 
+\end{split}
+\biggr),\\
+L_\mathrm{cls} = - \frac{1}{N} \sum_{a \in \mathcal{D}} 
+\biggl(
+\begin{split}
+&a \log P(a) + \\
+&(1-a) \log (1-P(a)) 
+\end{split}
+\biggr).
+\end{gather}
+\endgroup
 
 \section{Experiments}
 
@@ -138,7 +269,17 @@ WFA & 153,725 & 12,467 & --\\
 \label{tb:data}
 \end{table}
 
+\paragraph{Datasets and styles.}
+
+\paragraph{Model configurations.}
+
+\paragraph{Optimizer.}
+
+\paragraph{Regularization.}
+
 \subsection{Results}
+
+\paragraph{Does our model achieve state-of-the-art performance for generative RC?}
 
 \begin{table}
 \centering
@@ -201,6 +342,14 @@ Masque w/ gold passage ranker & ALL & 78.70 & 78.14 \\
 \label{tb:ablation}
 \end{table}
 
+\paragraph{Does our multi-style learning improve NLG performance?}
+
+\paragraph{Does our Transformer-based pointer-generator improve NLG performance?}
+
+\paragraph{Does our joint learning with the ranker and classifier improve NLG performance?}
+
+\paragraph{Does our joint learning improve the passage re-ranking performance?}
+
 \begin{table}[t!]
 \centering
 {\small \tabcolsep=3.5pt
@@ -232,6 +381,12 @@ w/o possibility classifier (\S\ref{sec:classifier})
 \label{fig:anspos}
 \end{figure}
 
+\paragraph{Does our model accurately identify answerable questions?}
+
+\paragraph{Does our model accurately control answers with different styles?}
+
+\paragraph{Error analysis.}
+
 \begin{figure}[t!]
 \centering
 \includegraphics[width=.46\textwidth]{./images/length3.eps}
@@ -240,6 +395,16 @@ w/o possibility classifier (\S\ref{sec:classifier})
 \end{figure}
 
 \section{Related Work and Discussion}
+
+\paragraph{RC with NLG.}
+
+\paragraph{Controllable text generation.}
+
+\paragraph{Multi-passage RC.}
+
+\paragraph{RC with unanswerable question identification.}
+
+\paragraph{Abstractive summarization.}
 
 \section{Conclusion}
 

@@ -28,7 +28,14 @@ def get_sections(text):
     :param text: content of the latex file
     :return: iterator with section/subsection names, in latex format: `\section{section name}`
     """
-    return re.finditer(r"\\(?:sub)*section{.*}", text)
+    tmp = re.finditer(r"^(?!%)\\(s(?:ubs)?ection|paragraph){.*}( |$)", text, re.MULTILINE)
+    # Removing elements with multiple }
+    """ Ex: \paragraph{Multi-source abstractive summarization based RC.} The first idea is to use a pointer-generator 
+    mechanism for multi-passage RC, which was originally proposed for text summarization~\citep{SeeLM17}. 
+    \citet{HasselqvistHK17} and \citet{McCannKXS18} 
+    This is matched instead of just paragraph{.*} because of the following \cite{} elements
+    """
+    return [(e.start(), e.group().split("}")[0] + "}") for e in tmp]
 
 
 def get_figure(text):
@@ -37,6 +44,7 @@ def get_figure(text):
     :param text: content of the latex file
     :return: iterator with all specific elements and their content, in latex format
     """
+
     return re.finditer(r'((?<!\\begin{comment})\s\\begin{(?P<sec>(?:figure\*{0,1}|itemize|equation|table|enumerate))}(?:.*?)\\end{(?P=sec)})', text, re.S)
 
 
@@ -53,7 +61,7 @@ def get_all(text):
     for e in get_figure(text):
         result.append((e.start(), e.group()))
     for e in get_sections(text):
-        result.append((e.start(), e.group()))
+        result.append(e)
     result.sort()
 
     # extraction on a small part of the latex source restarts the regex matches position numbering.
