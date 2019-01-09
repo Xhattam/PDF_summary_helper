@@ -18,7 +18,7 @@ def paper_helper_main(pdf_url, dest):
     :param dest: name of folder to save download/results/PDF to
     :return:
     """
-    arxiv_downloader_main(pdf_url, dest)
+    arxiv_downloader_main(pdf_url)
     dest_path = get_dest_path()
     parser_main(dest_path)
 

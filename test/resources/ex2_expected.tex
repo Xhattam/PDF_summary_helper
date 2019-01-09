@@ -1,0 +1,249 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[hyperref]{emnlp2018}
+%\hypersetup{draft}
+
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage{pbox}
+\usepackage{url}
+\aclfinalcopy % Uncomment this line for the final submission
+
+%\setlength\titlebox{5cm}
+
+\newcommand\BibTeX{B{\sc ib}\TeX}
+\newcommand\confname{EMNLP 2018}
+\newcommand\conforg{SIGDAT}
+
+\usepackage{amsmath,amsfonts,amsthm}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\usepackage{footnote}
+\makesavenoteenv{tabular}
+\makesavenoteenv{table}
+
+\newtheoremstyle{mydef}%
+{}{}{\normalfont}{}{\itshape}{.\,}{ }{}
+\theoremstyle{mydef}
+\newtheorem{definition}{Definition}
+
+\newtheoremstyle{myprob}%
+{}{}{\normalfont}{}{\scshape}{.\,}{ }{}
+\theoremstyle{myprob}
+\newtheorem{problem}{Problem}
+
+\newtheoremstyle{mylayer}{}{}{\normalfont}{}{\itshape}{.\,}{ }{}\theoremstyle{mylayer}
+\newtheorem{layer1}{}
+
+%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\title{Multi-style Generative Reading Comprehension}
+
+\author{Kyosuke Nishida$^1$, 
+Itsumi Saito$^1$, 
+Kosuke Nishida$^1$, 
+\\{\bf Kazutoshi Shinoda}$^2$\thanks{\ \ Work done during an internship at NTT.}, 
+{\bf Atsushi Otsuka}$^1$,
+{\bf Hisako Asano}$^1$, 
+{\bf Junji Tomita}$^1$\\
+  $^1$NTT Media Intelligence Laboratory, NTT Corporation \hspace{1.5em}  $^2$The University of Tokyo\\
+  {\tt kyosuke.nishida@acm.org}
+}
+
+\date{}
+
+\maketitle
+\begin{abstract}
+This study focuses on the task of multi-passage reading comprehension (RC) where an answer is provided in natural language. Current mainstream approaches treat RC by extracting the answer span from the provided passages and cannot generate an abstractive summary from the given question and passages. Moreover, they cannot utilize and control different styles of answers, such as concise phrases and well-formed sentences, within a model. 
+In this study, we propose a style-controllable Multi-source Abstractive Summarization model for QUEstion answering, called Masque. The model is an end-to-end deep neural network that can generate answers conditioned on a given style. 
+Experiments with MS MARCO 2.1 show that our model achieved state-of-the-art performance %in terms of Rouge-L 
+on two tasks with different answer styles.
+\end{abstract}
+
+\section{Introduction}
+
+\begin{figure}[t!]
+\centering
+\includegraphics[width=.47\textwidth]{./images/masque_mixratio2.eps}
+\caption{Visualization of how our model generates the answer. Given a style (\textbf{Top}: well-formed NLG, \textbf{Bottom}: concise Q\&A), our model chooses to generate words from a fixed vocabulary or copy words from the question and multiple passages at each decoding step.
+}
+\label{fig:mixratio}
+\end{figure}
+
+\section{Problem Formulation}
+
+\section{Proposed Model} 
+
+\begin{figure}[t!]
+\centering
+\includegraphics[width=.48\textwidth]{./images/Masque_model11.eps}
+\caption{The Masque model architecture.}
+\label{fig:model}
+\end{figure}
+
+\subsection{Question-Passages Reader}
+
+\subsubsection{Word Embedding Layer}
+
+\subsubsection{Shared Encoder Layer}
+
+\subsubsection{Dual Attention Layer}
+
+\subsubsection{Modeling Encoder Layer}
+
+\subsection{Passage Ranker}
+
+\subsection{Answer Possibility Classifier}
+
+\subsection{Answer Sentence Decoder}
+
+\subsubsection{Word Embedding Layer}
+
+\subsubsection{Attentional Decoder Layer}
+
+\subsubsection{Multi-source Pointer-Generator}
+
+\begin{figure}[t!]
+\centering
+\includegraphics[width=.44\textwidth]{./images/Masque_copy3.eps}
+\caption{Multi-source pointer-generator mechanism. Weights $\lambda^v, \lambda^q, \lambda^p$ for the probability of generating words from the vocabulary and copying words from the question and the passages are calculated for each decoding step. The three distributions are weighted and summed to obtain the final distribution.}
+\label{fig:copy}
+\end{figure}
+
+\subsubsection{Combined Attention}
+
+\subsection{Loss Function}
+
+\section{Experiments}
+
+\subsection{Setup}
+
+\begin{table}[t!]
+\centering
+{\small \tabcolsep=5pt
+\begin{tabular}{c|ccc}
+\hline
+set   & train & dev. & eval \\ \hline
+ALL & 808,731 & 101,093 & 101,092\\
+ANS & 503,370 & 55,636 & --\\
+WFA & 153,725 & 12,467 & --\\
+\hline
+\end{tabular} \\
+}
+\caption{Numbers of question-answer pairs used in the experiments. ALL, ANS, and WFA mean all, answerable, and well-formed data, respectively.}
+\label{tb:data}
+\end{table}
+
+\subsection{Results}
+
+\begin{table}
+\centering
+{\small \tabcolsep=1.4pt
+\begin{tabular}{l|cc|cc}
+\hline
+ & \multicolumn{2}{c|}{NLG} & \multicolumn{2}{c}{Q\&A}\\ %\hline
+Model & Rouge-L & Bleu-1 & Rouge-L & Bleu-1\\ \hline
+BiDAF \citeyearpar{SeoKFH17} & 16.91 & 9.30 & 23.96 & 10.64 \\
+Deep Cascade QA \citeyearpar{YanAAAI19} & 35.14 & 37.35 &  52.01 & {\bf 54.64}\\ 
+S-Net \citeyearpar{TanWYDLZ18}\footnote{An unpublished variant by Bo Shao of SYSU University.}   & 45.04 & 40.62 & 44.96 & 46.36\\
+VNET \citeyearpar{WuWLHWLLL18}  & 48.37 & 46.75 & 51.63 & 54.37\\ \hline
+Masque (NLG; single) & 49.19 &  49.63 & 48.42 & 48.68\\
+Masque (Q\&A; single) & 25.66 & 36.62 & 50.93 & 42.37\\ 
+%Masque (single) & 49.19 &  49.63 & 50.93 & 42.37\\ 
+\hline
+Masque (NLG; ensemble) & {\bf 49.61} & {\bf 50.13} & 48.92& 48.75 \\
+Masque (Q\&A; ensemble) & 28.53 & 39.87 & {\bf 52.20} & 43.77 \\ 
+%Masque (ensemble) & {\bf 49.61} & {\bf 50.13} & {\bf 52.20} & 43.77 \\ 
+\hline
+Human Performance & 63.21 & 53.03  & 53.87 & 48.50\\
+\hline
+\end{tabular}
+}
+\caption{Performance of our model and competing models on the MS MARCO 2.1 leaderboard (3 January 2019). 
+Whether the competing models are ensemble models or not is unreported. }
+\label{tb:nlg-leaderboard}
+\end{table}
+
+\begin{table}[t!]
+\centering
+{\small \tabcolsep=1.5pt %3.5pt
+\begin{tabular}{p{15em}|c|cc}
+\hline
+Model & train & Rouge-L & Bleu-1 \\ \hline
+Masque (NLG style; single)
+%\footnote{It was trained with all data (ALL train set). } 
+& ALL&  {\bf 69.77} & {\bf 65.56} \\ %\hline
+\begin{tabular}{p{15em}}
+w/o multi-style learning (\S\ref{sec:style})
+%\footnote{It was trained with well-formed data (WFA train set).}
+\end{tabular} & WFA &68.20 & 63.95 \\
+\begin{tabular}{p{15em}}
+%\hspace{1em}
+$\hookrightarrow$
+w/o Transformer (\S\ref{sec:tfenc}, \S\ref{sec:style})%\footnotemark[3] %WFA
+\end{tabular} & WFA & 67.13 & 62.96 \\ 
+\begin{tabular}{p{15em}}
+w/o passage ranker (\S\ref{sec:ranker})%\footnotemark[3] % WFA
+\end{tabular} & WFA & 68.05 & 63.82 \\
+\begin{tabular}{p{15em}}
+w/o possibility classifier (\S\ref{sec:classifier})
+%\footnote{It was trained with answerable data (ANS train set).}
+\end{tabular} & ANS & 69.64 & 65.41 \\ \hline
+Masque w/ gold passage ranker & ALL & 78.70 & 78.14 \\ 
+\hline
+\end{tabular}
+}
+\caption{RC performance of our models for Rouge-L and Bleu-1 on the WFA dev.~set. The models were trained with the dataset described in the column 'train'.}
+\label{tb:ablation}
+\end{table}
+
+\begin{table}[t!]
+\centering
+{\small \tabcolsep=3.5pt
+\begin{tabular}{p{14em}|c|cc}
+\hline
+Model & train & MAP & MRR \\ \hline
+Bing (initial ranking) & - & 34.62 & 35.00 \\ \hline
+Masque (single) &ALL & {\bf 69.51} & {\bf 69.96}\\ %ALL
+\begin{tabular}{p{14em}}
+w/o answer decoder (\S\ref{sec:decoder})
+\end{tabular} & ALL & 67.03 & 67.49 \\ 
+\begin{tabular}{p{14em}}
+w/o multi-style learning (\S\ref{sec:style})
+\end{tabular} & WFA & 65.51 & 65.59 \\ 
+\begin{tabular}{p{14em}}
+w/o possibility classifier (\S\ref{sec:classifier})
+\end{tabular} & ANS & 69.08 & 69.54 \\ 
+\hline
+\end{tabular}
+}
+\caption{Passage re-ranking performance for MAP and MRR~\citep{CraswellR09,Craswell09a} on the ANS dev.~set. }
+\label{tb:ranker}
+\end{table}
+
+\begin{figure}[t!]
+\centering
+\includegraphics[width=.35\textwidth]{./images/masque_prcurve333.eps}
+\caption{Precision-recall curve of answer possibility classification on the ALL dev.~set.}
+\label{fig:anspos}
+\end{figure}
+
+\begin{figure}[t!]
+\centering
+\includegraphics[width=.46\textwidth]{./images/length3.eps}
+\caption{Lengths of answers generated by Masque broken down by answer style and query type on the WFA dev.\ set. Error bars mean standard errors.}
+\label{fig:length}
+\end{figure}
+
+\section{Related Work and Discussion}
+
+\section{Conclusion}
+
+\bibliographystyle{acl_natbib_nourl}
+\bibliography{references}
+
+\end{document}

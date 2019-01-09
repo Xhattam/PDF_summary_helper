@@ -41,6 +41,7 @@ mthu@mail.nankai.edu.cn, \{zhaosw, lizhang, caikeke, suzhong\}@cn.ibm.com, \\ ch
 \begin{abstract}
 Aspect level sentiment classification is a fine-grained sentiment analysis task, compared to the sentence level classification. A sentence usually contains one or more aspects. To detect the sentiment towards a particular aspect in a sentence, previous studies have developed various methods for generating aspect-specific sentence representations. However, these studies handle each aspect of a sentence separately. In this paper, we argue that multiple aspects of a sentence are usually orthogonal based on the observation that different aspects concentrate on different parts of the sentence. To force the orthogonality among aspects, we propose constrained attention networks (CAN) for multi-aspect sentiment analysis, which handles multiple aspects of a sentence simultaneously. Experimental results on two public datasets demonstrate the effectiveness of our approach. We also extend our approach to multi-task settings, outperforming the state-of-the-arts significantly.
 \end{abstract}
+
 \section{Introduction}
 
 \begin{figure}
@@ -112,6 +113,12 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
     R_s = \mid\sum\limits_{l=1}^L{\alpha_{kl}^{2}} - 1\mid
     \label{equation:sparse_reg}
+\end{equation}
+
+\begin{equation}
+\setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
+\setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
+  R_o = \parallel{M^{\mathrm{T}}}M - I\parallel_2
 \end{equation}
 
 \section{Experiments}
