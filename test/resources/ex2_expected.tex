@@ -1,15 +1,11 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[hyperref]{emnlp2018}
-%\hypersetup{draft}
 
 \usepackage{times}
 \usepackage{latexsym}
 \usepackage{pbox}
 \usepackage{url}
 \aclfinalcopy % Uncomment this line for the final submission
-
-%\setlength\titlebox{5cm}
-
 \newcommand\BibTeX{B{\sc ib}\TeX}
 \newcommand\confname{EMNLP 2018}
 \newcommand\conforg{SIGDAT}
@@ -36,9 +32,6 @@
 
 \newtheoremstyle{mylayer}{}{}{\normalfont}{}{\itshape}{.\,}{ }{}\theoremstyle{mylayer}
 \newtheorem{layer1}{}
-
-%%%%%%%%%%%%%%%
-
 \begin{document}
 
 \title{Multi-style Generative Reading Comprehension}
@@ -74,20 +67,15 @@ on two tasks with different answer styles.
 \label{fig:mixratio}
 \end{figure}
 
-\paragraph{Multi-source abstractive summarization based RC.}
-
-\paragraph{Style-controllable RC.}
-
 \section{Problem Formulation}
 
 \begin{problem}
 \label{prob:prob}
 Given a question with $J$ words $x^q = \{x^q_1, \ldots, x^q_J\}$, a set of $K$ passages, where each $k$-th passage is composed of $L$ words $x^{p_k} = \{x^{p_k}_1, \ldots, x^{p_k}_{L}\}$, and an answer style $s$, an RC system %distinguishes whether the question is answered on the basis of the provided passages and 
 outputs an answer $y = \{y_1, \ldots, y_T \}$ conditioned on the style.
-%when the question can be answered.
 \end{problem}
 
-\section{Proposed Model} 
+\section{Proposed Model}
 
 \begin{figure}[t!]
 \centering
@@ -104,21 +92,9 @@ The \textbf{question-passages reader} (\S\ref{sec:reader}) models interactions b
 The \textbf{passage ranker} (\S\ref{sec:ranker}) finds relevant passages to the question.
 \end{layer1}
 
-\begin{layer1}
-The \textbf{answer possibility classifier} (\S\ref{sec:classifier}) identifies answerable questions.
-\end{layer1}
-
-\begin{layer1}
-The \textbf{answer sentence decoder} (\S\ref{sec:decoder}) outputs a sequence of words conditioned on the style.
-\end{layer1}
-
 \subsection{Question-Passages Reader}
 
 \subsubsection{Word Embedding Layer}
-
-\subsubsection{Shared Encoder Layer}
-
-\paragraph{Transformer encoder block.}
 
 \subsubsection{Dual Attention Layer}
 
@@ -126,65 +102,7 @@ The \textbf{answer sentence decoder} (\S\ref{sec:decoder}) outputs a sequence of
 U^{p_k}_{lj} = {w^a}^\top [ E^{p_k}_l; E^q_j; E^{p_k}_l \odot E^q_j ]
 \end{align}
 
-\begin{align}
-\nonumber
-[E^{p_k}; \bar{A}^{p_k}; \bar{\bar{A}}^{p_k}; E^{p_k} \odot \bar{A}^{p_k}; E^{p_k} \odot \bar{\bar{A}}^{p_k}] 
-\end{align}
-
-\begin{align}
-\begin{split}
-\nonumber
-& [ E^{q} ; \max_k(\bar{B}^{p_k}); \max_k(\bar{\bar{B}}^{p_k}); \\
-&\hspace{1em} E^{q} \odot \max_k(\bar{B}^{p_k}); E^{q} \odot \max_k(\bar{\bar{B}}^{p_k})  ] \mathrm{\ \ where}
-\end{split}\\
-\nonumber
-&\bar{A}^{p_k} =  E^q A^{p_k}\in \mathbb{R}^{d \times L}, \ 
-\bar{B}^{p_k} =  E^{p_k} B^{p_k} \in \mathbb{R}^{d \times J} \\
-\nonumber
-&\bar{\bar{A}}^{p_k} = \bar{B}^{p_k} A^{p_k} \in \mathbb{R}^{d \times L}, \ 
-\bar{\bar{B}}^{p_k} = \bar{A}^{p_k} B^{p_k} \in \mathbb{R}^{d \times J}.
-\end{align}
-
 \subsubsection{Modeling Encoder Layer}
-
-\subsection{Passage Ranker}
-
-\begin{align}
-\beta^{p_k} = \mathrm{sigmoid}({w^r}^\top M^{p_k}_1),
-\end{align}
-
-\subsection{Answer Possibility Classifier}
-
-\begin{align}
-P(a) = \mathrm{sigmoid}({w^c}^\top [M^{p_1}_1; \ldots; M^{p_K}_1]),
-\end{align}
-
-\subsection{Answer Sentence Decoder}
-
-\subsubsection{Word Embedding Layer}
-
-\subsubsection{Attentional Decoder Layer}
-
-\paragraph{Transformer decoder block.}
-
-\begin{align}
-M^{p_\mathrm{all}} = [M^{p_1}, \ldots, M^{p_K}] \in \mathbb{R}^{d \times KL}.
-\end{align}
-
-\subsubsection{Multi-source Pointer-Generator}
-
-\begin{figure}[t!]
-\centering
-\includegraphics[width=.44\textwidth]{./images/Masque_copy3.eps}
-\caption{Multi-source pointer-generator mechanism. Weights $\lambda^v, \lambda^q, \lambda^p$ for the probability of generating words from the vocabulary and copying words from the question and the passages are calculated for each decoding step. The three distributions are weighted and summed to obtain the final distribution.}
-\label{fig:copy}
-\end{figure}
-
-\paragraph{Extended vocabulary distribution.}
-
-\begin{align}
-P^v(y_t)  =\mathrm{softmax}({W^2}^\top (W^1 s_t  + b^1)),
-\end{align}
 
 \paragraph{Copy distribution.}
 
@@ -192,8 +110,6 @@ P^v(y_t)  =\mathrm{softmax}({W^2}^\top (W^1 s_t  + b^1)),
 e^q_j &= {w^q}^\top \tanh(W^{qm} M_j^q + W^{qs} s_t +b^q), \\
 \alpha^q_t &= \mathrm{softmax}(e^q), \\ 
 c^q_t &= \textstyle \sum_j \alpha^q_{tj} M_j^q, \\
-%\end{align}
-%\begin{align}
 e^{p_k}_l &= {w^p}^\top \tanh(W^{pm} M_l^{p_k} + W^{ps} s_t +b^p), \\
 \alpha^p_t &= \mathrm{softmax}([e^{p_1}; \ldots; e^{p_K}]), \\
 c^p_t &=  \textstyle \sum_{l} \alpha^p_{tl} M^{p_\mathrm{all}}_{l}, 
@@ -204,110 +120,11 @@ P^q(y_t) &=  \textstyle \sum_{j: x^q_j = y_t} \alpha^q_{tj}, \\
 P^p(y_t) &= \textstyle \sum_{l: x^{p_{k(l)}}_{l} = y_t} \alpha^p_{tl},
 \end{align}
 
-\paragraph{Final distribution.}
-
-\begin{align}
-P(y_t) = \lambda^v P^v(y_t) +  \lambda^q P^q(y_t) + \lambda^p P^p(y_t),
-\end{align}
-
-\begin{align}
-\lambda^v, \lambda^q, \lambda^p = \mathrm{softmax}(W^m [s_t; c^q_t; c^p_t] + b^m).
-\end{align}
-
-\subsubsection{Combined Attention}
-
-\begin{align}
-\alpha^p_{tl} & := \frac{\alpha^p_{tl} \beta^{p_{k(l)} }}{\sum_{l'} \alpha^p_{tl'} \beta^{p_{k(l')}}}.
-\end{align}
-
-\subsection{Loss Function}
-
-\begin{align}
-L(\theta) = L_\mathrm{dec} + \gamma_\mathrm{rank} L_\mathrm{rank} + \gamma_\mathrm{cls} L_\mathrm{cls}
-\end{align}
-
-\begin{align}
-L_\mathrm{dec} = - \frac{1}{N_\mathrm{able}}\sum_{(a,y)\in \mathcal{D}} \frac{a}{T} \sum_t \log P(y_{t}),
-\end{align}
-
-\begingroup\makeatletter\def\f@size{9.5}\check@mathfonts
-\begin{gather}
-L_\mathrm{rank} = -  \frac{1}{NK} \sum_k \sum_{r^{p_k}\in\mathcal{D}}  
-\biggl(
-\begin{split}
-&r^{p_k} \log \beta^{p_k} +  \\
-&(1-r^{p_k}) \log (1-\beta^{p_k}) 
-\end{split}
-\biggr),\\
-L_\mathrm{cls} = - \frac{1}{N} \sum_{a \in \mathcal{D}} 
-\biggl(
-\begin{split}
-&a \log P(a) + \\
-&(1-a) \log (1-P(a)) 
-\end{split}
-\biggr).
-\end{gather}
-\endgroup
-
 \section{Experiments}
 
 \subsection{Setup}
 
-\begin{table}[t!]
-\centering
-{\small \tabcolsep=5pt
-\begin{tabular}{c|ccc}
-\hline
-set   & train & dev. & eval \\ \hline
-ALL & 808,731 & 101,093 & 101,092\\
-ANS & 503,370 & 55,636 & --\\
-WFA & 153,725 & 12,467 & --\\
-\hline
-\end{tabular} \\
-}
-\caption{Numbers of question-answer pairs used in the experiments. ALL, ANS, and WFA mean all, answerable, and well-formed data, respectively.}
-\label{tb:data}
-\end{table}
-
 \paragraph{Datasets and styles.}
-
-\paragraph{Model configurations.}
-
-\paragraph{Optimizer.}
-
-\paragraph{Regularization.}
-
-\subsection{Results}
-
-\paragraph{Does our model achieve state-of-the-art performance for generative RC?}
-
-\begin{table}
-\centering
-{\small \tabcolsep=1.4pt
-\begin{tabular}{l|cc|cc}
-\hline
- & \multicolumn{2}{c|}{NLG} & \multicolumn{2}{c}{Q\&A}\\ %\hline
-Model & Rouge-L & Bleu-1 & Rouge-L & Bleu-1\\ \hline
-BiDAF \citeyearpar{SeoKFH17} & 16.91 & 9.30 & 23.96 & 10.64 \\
-Deep Cascade QA \citeyearpar{YanAAAI19} & 35.14 & 37.35 &  52.01 & {\bf 54.64}\\ 
-S-Net \citeyearpar{TanWYDLZ18}\footnote{An unpublished variant by Bo Shao of SYSU University.}   & 45.04 & 40.62 & 44.96 & 46.36\\
-VNET \citeyearpar{WuWLHWLLL18}  & 48.37 & 46.75 & 51.63 & 54.37\\ \hline
-Masque (NLG; single) & 49.19 &  49.63 & 48.42 & 48.68\\
-Masque (Q\&A; single) & 25.66 & 36.62 & 50.93 & 42.37\\ 
-%Masque (single) & 49.19 &  49.63 & 50.93 & 42.37\\ 
-\hline
-Masque (NLG; ensemble) & {\bf 49.61} & {\bf 50.13} & 48.92& 48.75 \\
-Masque (Q\&A; ensemble) & 28.53 & 39.87 & {\bf 52.20} & 43.77 \\ 
-%Masque (ensemble) & {\bf 49.61} & {\bf 50.13} & {\bf 52.20} & 43.77 \\ 
-\hline
-Human Performance & 63.21 & 53.03  & 53.87 & 48.50\\
-\hline
-\end{tabular}
-}
-\caption{Performance of our model and competing models on the MS MARCO 2.1 leaderboard (3 January 2019). 
-Whether the competing models are ensemble models or not is unreported. }
-\label{tb:nlg-leaderboard}
-\end{table}
 
 \begin{table}[t!]
 \centering
@@ -316,14 +133,11 @@ Whether the competing models are ensemble models or not is unreported. }
 \hline
 Model & train & Rouge-L & Bleu-1 \\ \hline
 Masque (NLG style; single)
-%\footnote{It was trained with all data (ALL train set). } 
 & ALL&  {\bf 69.77} & {\bf 65.56} \\ %\hline
 \begin{tabular}{p{15em}}
 w/o multi-style learning (\S\ref{sec:style})
-%\footnote{It was trained with well-formed data (WFA train set).}
 \end{tabular} & WFA &68.20 & 63.95 \\
 \begin{tabular}{p{15em}}
-%\hspace{1em}
 $\hookrightarrow$
 w/o Transformer (\S\ref{sec:tfenc}, \S\ref{sec:style})%\footnotemark[3] %WFA
 \end{tabular} & WFA & 67.13 & 62.96 \\ 
@@ -332,7 +146,6 @@ w/o passage ranker (\S\ref{sec:ranker})%\footnotemark[3] % WFA
 \end{tabular} & WFA & 68.05 & 63.82 \\
 \begin{tabular}{p{15em}}
 w/o possibility classifier (\S\ref{sec:classifier})
-%\footnote{It was trained with answerable data (ANS train set).}
 \end{tabular} & ANS & 69.64 & 65.41 \\ \hline
 Masque w/ gold passage ranker & ALL & 78.70 & 78.14 \\ 
 \hline
@@ -344,71 +157,96 @@ Masque w/ gold passage ranker & ALL & 78.70 & 78.14 \\
 
 \paragraph{Does our multi-style learning improve NLG performance?}
 
-\paragraph{Does our Transformer-based pointer-generator improve NLG performance?}
-
-\paragraph{Does our joint learning with the ranker and classifier improve NLG performance?}
-
-\paragraph{Does our joint learning improve the passage re-ranking performance?}
-
-\begin{table}[t!]
-\centering
-{\small \tabcolsep=3.5pt
-\begin{tabular}{p{14em}|c|cc}
-\hline
-Model & train & MAP & MRR \\ \hline
-Bing (initial ranking) & - & 34.62 & 35.00 \\ \hline
-Masque (single) &ALL & {\bf 69.51} & {\bf 69.96}\\ %ALL
-\begin{tabular}{p{14em}}
-w/o answer decoder (\S\ref{sec:decoder})
-\end{tabular} & ALL & 67.03 & 67.49 \\ 
-\begin{tabular}{p{14em}}
-w/o multi-style learning (\S\ref{sec:style})
-\end{tabular} & WFA & 65.51 & 65.59 \\ 
-\begin{tabular}{p{14em}}
-w/o possibility classifier (\S\ref{sec:classifier})
-\end{tabular} & ANS & 69.08 & 69.54 \\ 
-\hline
-\end{tabular}
-}
-\caption{Passage re-ranking performance for MAP and MRR~\citep{CraswellR09,Craswell09a} on the ANS dev.~set. }
-\label{tb:ranker}
-\end{table}
-
-\begin{figure}[t!]
-\centering
-\includegraphics[width=.35\textwidth]{./images/masque_prcurve333.eps}
-\caption{Precision-recall curve of answer possibility classification on the ALL dev.~set.}
-\label{fig:anspos}
-\end{figure}
-
-\paragraph{Does our model accurately identify answerable questions?}
-
-\paragraph{Does our model accurately control answers with different styles?}
-
-\paragraph{Error analysis.}
-
-\begin{figure}[t!]
-\centering
-\includegraphics[width=.46\textwidth]{./images/length3.eps}
-\caption{Lengths of answers generated by Masque broken down by answer style and query type on the WFA dev.\ set. Error bars mean standard errors.}
-\label{fig:length}
-\end{figure}
-
-\section{Related Work and Discussion}
-
-\paragraph{RC with NLG.}
-
-\paragraph{Controllable text generation.}
-
-\paragraph{Multi-passage RC.}
-
-\paragraph{RC with unanswerable question identification.}
-
-\paragraph{Abstractive summarization.}
-
 \section{Conclusion}
 
 \bibliographystyle{acl_natbib_nourl}
+
 \bibliography{references}
+
+\appendix
+
+\section{Reading Comprehension Examples generated by Masque from MS MARCO 2.1}
+
+\begin{table*}[h!]
+\centering
+\caption{Our model could control answer styles appropriately for (a) natural language, (b) cloze-style, and (c) keywords questions. (d) The Q\&A was incorrect. (e) %Passage re-ranking worked poorly and 
+The answers were not consistent between the styles. (f) Copying from numerical words worked poorly. There were some \underline{grammatical errors}.  }
+\label{tb:examples}
+{\footnotesize
+\tabcolsep=1pt
+\vspace{0.5pt}
+\begin{tabular}{p{50em}}
+\hline
+\vspace{0.5pt}
+\pbox{50em}{
+\textbf{(a) Question}: why your body would feel like it is shaking\\
+\textbf{Relevant Passage}: Shaking is a symptom in which a person has tremors (shakiness or small back and forth movements) in part or all of his body. Shaking can be due to cold body temperatures, rising fever (such as with infections), neurological problems, medicine effects, drug abuse, etc. ...Read more. \\
+\textbf{Reference Answer (Q\&A)}: Shaking can be due to cold body temperatures, rising fever (such as with infections), neurological problems, medicine effects, drug abuse, etc.  \\
+\textbf{Prediction (Q\&A)}: because of cold body temperatures , rising fever , neurological problems , medicine effects , drug abuse~.~\cmark\\
+\textbf{Reference Answers (NLG)}: Shaking can be due to cold body temperatures, rising fever, neurological problems, medicine effects and drug abuse. / 
+Body would feel like it is shaking due to cold body temperatures, rising fever, neurological problems, medicine effects, drug abuse. \\\
+\textbf{Prediction (NLG)}: your body would feel like it is shaking because of cold body temperatures , rising fever , neurological problems , medicine effects , drug abuse . \cmark
+}
+\vspace{1pt}
+\\ \hline
+\vspace{0.5pt}
+\pbox{50em}{
+\textbf{(b) Question}: \_\_\_\_\_ is the name used to refer to the era of legalized segregation in the united states \\
+\textbf{Relevant Passage}: Jim Crow law, in U.S. history, any of the laws that enforced racial segregation in the South between the end of Reconstruction in 1877 and the beginning of the civil rights movement in the 1950s.
+\\
+\textbf{Reference Answer (Q\&A)}: Jim Crow \\
+\textbf{Prediction (Q\&A)}: jim crow \cmark \\
+\textbf{Reference Answer (NLG)}: Jim Crow is the name used to refer to the era of legalized segregation in the United States. \\
+\textbf{Prediction (NLG)}: jim crow is the name used to refer to the era of legalized segregation in the united states . \cmark
+}
+\vspace{1pt}
+\\ \hline
+\vspace{0.5pt}
+\pbox{50em}{
+\textbf{(c) Question}: average height nba player\\
+\textbf{Relevant Passage}: The average height of an NBA player is around 6 feet 7 inches. The tallest NBA player ever was Gheorghe Muresan, who was 7 feet 7 inches tall. In contrast, the shortest NBA player ever was Tyrone Muggsy Bogues, who was 5 feet 3 inches tall. \\
+\textbf{Reference Answer (Q\&A)}: Around 6 feet 7 inches \\
+\textbf{Prediction (Q\&A)}: 6 feet 7 inches	\cmark \\
+\textbf{Reference Answers (NLG)}: The average height of NBA players is around 6 feet, 7 inches. / The height of NBA player is around 6 feet 7 inches.\\
+\textbf{Prediction (NLG)}: the average height of \underline{an} national basketball association player is 6 feet 7 inches . \cmark
+}
+\vspace{1pt}
+\\ \hline 
+\vspace{0.5pt}
+\pbox{50em}{
+\textbf{(d) Question}: population of henryetta ok\\
+\textbf{Relevant Passage}: With it's population of 5,927 people, Henryetta represented 14.79\% of the county's total. In addition, where the city of Henryetta has a population density of 891 people per square mile [344.2 people/km2], Okmulgee County averages 57.5 people per square mile [22.19 people/km2].\\
+\textbf{Reference Answer (Q\&A)}: 5927 \\
+\textbf{Prediction (Q\&A)}: the population of henryetta , oklahoma is 5,927 .   \cmark \hspace{.5em} (content is OK, but style is NG \xmark)\\
+\textbf{Reference Answer (NLG)}: The population of Henryetta, Oklahoma is 5,927. \\
+\textbf{Prediction (NLG)}:  the population of henryetta , oklahoma is 5,927 . \cmark
+}
+\vspace{1pt}
+\\ \hline 
+\vspace{0.5pt}
+\pbox{50em}{
+\textbf{(e) Question}: does gameplay programmer need math skill\\
+\textbf{Relevant Passage}: A good computer programmer is more of a problem solver and logical thinker than a math buff. And besides, the industry is peppered with many successful computer programmers who do not really know much about mathematics. \\
+\textbf{Reference Answer (Q\&A)}: No \\
+\textbf{Prediction (Q\&A)}: yes \xmark \\
+\textbf{Reference Answers (NLG)}: No, a gameplay programmer doesn't need math skill. / No, gameplay programmer do not need an math skill.\\
+\textbf{Prediction (NLG)}: no , \underline{gameplay programmer} does not need math skill . \cmark
+}
+\vspace{1pt}
+\\ \hline
+\vspace{0.5pt}
+\pbox{50em}{
+\textbf{(f) Question}: how long does a freezer take to cool down\\
+\textbf{Relevant Passage}: Quick Answer. It takes anywhere from three to 24 hours for a refrigerator to reach safe temperatures for storing food, depending on the size and type of unit. When the refrigerator compartment reaches 40 degrees Fahrenheit and the freezer reaches 5 degrees Fahrenheit, it is safe to transfer food items. Keep Learning. \\
+\textbf{Reference Answer (Q\&A)}: 24 hours\\
+\textbf{Prediction (Q\&A)}: 4 to 5 hours \xmark \\
+\textbf{Reference Answers (NLG)}: A freezer takes 24 hours to cool down. / A  freezer take to cool down is 24 hours.\\
+\textbf{Prediction (NLG)}: a freezer takes 4 to 12 hours to cool down . \xmark
+}
+\vspace{1pt}
+\\ \hline
+\end{tabular}
+}
+\end{table*}
 
 \end{document}

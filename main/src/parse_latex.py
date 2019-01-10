@@ -28,14 +28,8 @@ def get_sections(text):
     :param text: content of the latex file
     :return: iterator with section/subsection names, in latex format: `\section{section name}`
     """
-    tmp = re.finditer(r"^(?!%)\\(s(?:ubs)?ection|paragraph){.*}( |$)", text, re.MULTILINE)
-    # Removing elements with multiple }
-    """ Ex: \paragraph{Multi-source abstractive summarization based RC.} The first idea is to use a pointer-generator 
-    mechanism for multi-passage RC, which was originally proposed for text summarization~\citep{SeeLM17}. 
-    \citet{HasselqvistHK17} and \citet{McCannKXS18} 
-    This is matched instead of just paragraph{.*} because of the following \cite{} elements
-    """
-    return [(e.start(), e.group().strip().split("}")[0] + "}") for e in tmp]
+    tmp = re.finditer(r"^\\(s(?:ubs){0,2}ection|paragraph){.*?}", text, re.MULTILINE)
+    return [(e.start(), e.group()) for e in tmp]
 
 
 def get_figure(text):
@@ -44,8 +38,24 @@ def get_figure(text):
     :param text: content of the latex file
     :return: iterator with all specific elements and their content, in latex format
     """
+    patt = "|".join(["figure", "itemize", "equation", "table", "enumerate", "problem", "align", "layer1"])
+    tmp = re.finditer(r'((?<!\\begin{comment})\s\\begin{(?P<sec>(?:' +
+                       '{}'.format(patt) +
+                       r')\*{0,1})}(?:.*?)\\end{(?P=sec)})', text, re.S)
+    #tmp = re.finditer(r'\\begin{(?P<sec>(?:figure|equation|itemize|table|enumerate|problem|align|layer1)\*{0,1})}(?:.*?)\\end{(?P=sec)}', text, re.S)
 
-    return re.finditer(r'((?<!\\begin{comment})\s\\begin{(?P<sec>(?:figure\*{0,1}|itemize|equation|table|enumerate))}(?:.*?)\\end{(?P=sec)})', text, re.S)
+
+    return [(e.start(), e.group().strip()) for e in tmp]
+
+
+def remove_comments(text):
+    clean = "\n".join([l for l in text.split("\n") if not l.startswith("%")])
+    return re.sub(r'\n{3,}', '\n', clean)
+
+
+def get_appendix(text):
+    tmp = re.finditer(r'(^\\appendix$)', text, re.M)
+    return [(e.start(), e.group()) for e in tmp]
 
 
 def get_all(text):
@@ -55,21 +65,22 @@ def get_all(text):
     :param text: latex file content
     :return: blueprint of latex source file, ready to be written to output and edited and/or compiled in latex
     """
+    text = remove_comments(text)
     sections = re.split(r'(\\section{.*})', text)
     header = sections[0].strip()
     result = [(0, header)]
-    for e in get_figure(text):
-        result.append((e.start(), e.group().strip()))
-    for e in get_sections(text):
-        result.append(e)
+    result += get_figure(text)
+    result += get_sections(text)
+    result += get_references(text)
+    result += get_appendix(text)
+    # for e in get_figure(text):
+    #     result.append(e)
+    # for e in get_sections(text):
+    #     result.append(e)
     result.sort()
 
-    # extraction on a small part of the latex source restarts the regex matches position numbering.
-    # this is a trick to make sure the bibliography lines are at the end of the document.
-    fake_start = result[-1][0] + 1
-    for e in get_references(sections[-1]):
-        result.append((fake_start, e.group()))
-        fake_start += 1
+    # for e in get_references(text):
+    #     result.append(e)
     return "\n\n".join(e[1] for e in result).strip() + "\n\n\end{document}\n"
 
 
@@ -79,7 +90,8 @@ def get_references(content):
     :param content: last section of the extracted latex file
     :return: iterator containing each line matching \bilbio.*{.*}
     """
-    return re.finditer(r'\\biblio.*{.*}', content)
+    tmp = re.finditer(r'\\biblio.*{.*}', content)
+    return [(e.start(), e.group()) for e in tmp]
 
 
 def parser_main(dl_path):

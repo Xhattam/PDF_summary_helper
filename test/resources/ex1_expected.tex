@@ -16,20 +16,9 @@
 \usepackage{color}
 
 \usepackage{verbatim}
-
-
 \newcommand\BibTeX{B{\sc ib}\TeX}
 
 \title{CAN: Constrained Attention Networks for Multi-Aspect Sentiment Analysis}
-% \author{
-%   Mengting Hu \\
-%   {\tt mthu@mail.nankai.edu.cn} \\
-%   {Nankai University, Tianjin, China} \\
-%   \And
-%   Shiwan Zhao \\
-%   {\tt zhaosw@cn.ibm.com }      \\
-%   {IBM Research - China, Beijing , China}
-%   }
 \author{Mengting Hu\textsuperscript{1}\thanks{\quad This work was done when Mengting Hu was a research intern at IBM Research - China.}, Shiwan Zhao\textsuperscript{2}, Li Zhang\textsuperscript{2}, Keke Cai\textsuperscript{2},
 Zhong Su\textsuperscript{2}, Renhong Cheng\textsuperscript{1}, Xiaowei Shen\textsuperscript{2} \\
 \textsuperscript{1} Nankai University, \textsuperscript{2} IBM Research - China \\
@@ -56,10 +45,6 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \begin{itemize}
 \vspace{-0.2cm}
 \item We propose CAN for multi-aspect sentiment analysis. Specifically, we introduce {\bf orthogonal} and {\bf sparse} regularizations to constrain the attention weight allocation, helping learn better aspect-specific sentence representations. To the best of our knowledge, this is the first work for multi-aspect sentiment analysis.
-
-%\vspace{-0.2cm}
-%\item \textcolor{red}{For accurately constraining the sentences, we annotate two public datasets about whether multiple aspects in the sentence are overlap, and we will publish the datasets.} 
-
 \vspace{-0.2cm}
 \item We extend CAN to multi-task settings by introducing ACD as an auxiliary task, and applying CAN on  both ALSC and ACD tasks. 
 
@@ -154,8 +139,6 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \vspace{-6pt}
 \item {\bf ATAE-LSTM} \cite{Wang2016Attention}: This method is an extension of AT-LSTM. In this model, the aspect embedding is concatenated to each word embedding of the sentence as the input to the LSTM layer. 
 
-%\vspace{-5pt}
-%\item {\bf AF-LSTM(CONV)} \cite{Tay2017Learning}: It utilizes circular convolution to compute deeper fusion relationships between each word in sentence and aspect.
 \end{itemize}
 
 \begin{table}[t!]
