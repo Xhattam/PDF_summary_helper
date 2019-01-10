@@ -1,0 +1,40 @@
+\begin{table*}[htb]
+  \centering
+  {\small
+  \begin{tabular}{llr}
+  \toprule
+    Model & Hyperparameter & Range \\ \toprule
+    %InferSent$+$MLP & & \\
+    (a) MLP & (1) optimizer & $\{$Adam,RMSprop,Adagrad,Adadelta,Adamax,Nadam,sgd$\}$ \\
+    & (2) \#hidden layers $N$ & $\{1,2,3,4\}$\\
+    & (3) dropout value & $[0.1,0.75]$ \\
+    %(a) MLP 
+    & (4) hidden units & $[30,500]$ \\
+    & (5) learning rate & $\mathcal{N}(m,m/5)$\\
+    & (6) weight initializer & $\{$random-n, random-u, varscaling, orthogonal, \\
+    & & lecun-u, glorot-n, glorot-u, he-n, he-u$\}$\\
+    \midrule
+    %FastText & & \\
+             %& minCount & $\{0,1,2\}$\\
+     (b) CNN        & (a) (1,3,5,6) & same as MLP \\
+             %& epochs & $\{500,1000,2000\}$ \\
+             & embedding dimension & $[40,200]$\\
+     %(b) CNN        
+     & number of filters $n_k$ & $[30,500]$\\
+             & \#hidden layers $N$ & $\{1,2,3\}$\\
+             & filter size $h$ & $\{1,2,2,3,3,3,4\}$\\
+%     & hidden size & $\{50,75,100,125,150,200,300,500\}$\\
+%    \HAN & embedding size &  $\{50,100,150,200,300,400,500\}$ \\
+  %  & devsize & $\{0.1,0.2,0.3,0.4\}$\\
+%    & pretrained word vectors & $\{\text{None},\text{Komninos},\text{Glove}\}$\\
+    %& regularization coefficient &  $[0.01, 10]$ \\
+    \midrule
+      (c) RNN/LSTM & (a) (1-5) & same as MLP \\
+     & recurrent initializer & same as (a) (6) plus identity matrix\\
+    %& & $\{31,32,33,34,35,36,37,38,39,40\}$ \\
+    \midrule
+  \end{tabular}
+  \caption{Hyperparameter ranges for each network type. Hyperparameters are drawn using a discrete or continuous uniform distribution from the indicated ranges. Repeated values indicate multi-sets. $\mathcal{N}(\mu,s)$ is the normal distribution with mean $\mu$ and std $s$; $\mu=m$ is the default value from keras for the specific optimizer (if drawn learning rate is $<0$, we choose it to be $m$).}
+  \label{table:hyperparams_sent}
+  }
+\end{table*}

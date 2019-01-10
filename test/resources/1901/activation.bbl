@@ -1,0 +1,206 @@
+\begin{thebibliography}{27}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+
+\bibitem[{Braud et~al.(2017)Braud, Lacroix, and S{\o}gaard}]{Braud:2017}
+Chlo{\'{e}} Braud, Oph{\'{e}}lie Lacroix, and Anders S{\o}gaard. 2017.
+\newblock {Cross-lingual and cross-domain discourse segmentation of entire
+  documents}.
+\newblock In \emph{Proceedings of the 55th Annual Meeting of the Association
+  for Computational Linguistics}, volume~2, pages 237--243.
+
+\bibitem[{Chen and Manning(2014)}]{Chen:2014}
+Danqi Chen and Christopher Manning. 2014.
+\newblock \href {http://www.aclweb.org/anthology/D14-1082} {A fast and accurate
+  dependency parser using neural networks}.
+\newblock In \emph{Proceedings of the 2014 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 740--750, Doha, Qatar.
+  Association for Computational Linguistics.
+
+\bibitem[{Clevert et~al.(2015)Clevert, Unterthiner, and
+  Hochreiter}]{Clevert:2015}
+Djork{-}Arn{\'{e}} Clevert, Thomas Unterthiner, and Sepp Hochreiter. 2015.
+\newblock \href {http://arxiv.org/abs/1511.07289} {Fast and accurate deep
+  network learning by exponential linear units (elus)}.
+\newblock \emph{CoRR}, abs/1511.07289.
+
+\bibitem[{Conneau et~al.(2017)Conneau, Kiela, Schwenk, Barrault, and
+  Bordes}]{Conneau:2017}
+Alexis Conneau, Douwe Kiela, Holger Schwenk, Loic Barrault, and Antoine Bordes.
+  2017.
+\newblock \href {http://www.aclweb.org/anthology/D17-1071} {{Supervised
+  Learning of Universal Sentence Representations from Natural Language
+  Inference Data}}.
+\newblock In \emph{Proceedings of the 2017 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP 2017)}, pages 681--691. Association for
+  Computational Linguistics.
+
+\bibitem[{Eger et~al.(2017)Eger, Daxenberger, and Gurevych}]{Eger:2017}
+Steffen Eger, Johannes Daxenberger, and Iryna Gurevych. 2017.
+\newblock \href {http://aclweb.org/anthology/P17-1002} {Neural end-to-end
+  learning for computational argumentation mining}.
+\newblock In \emph{Proceedings of the 55th Annual Meeting of the Association
+  for Computational Linguistics (Volume 1: Long Papers)}, pages 11--22,
+  Vancouver, Canada. Association for Computational Linguistics.
+
+\bibitem[{Glorot et~al.(2011)Glorot, Bordes, and Bengio}]{Glorot:2011}
+Xavier Glorot, Antoine Bordes, and Yoshua Bengio. 2011.
+\newblock \href {http://proceedings.mlr.press/v15/glorot11a.html} {Deep sparse
+  rectifier neural networks}.
+\newblock In \emph{Proceedings of the Fourteenth International Conference on
+  Artificial Intelligence and Statistics}, volume~15 of \emph{Proceedings of
+  Machine Learning Research}, pages 315--323, Fort Lauderdale, FL, USA. PMLR.
+
+\bibitem[{Goodfellow et~al.(2013)Goodfellow, Warde-Farley, Mirza, Courville,
+  and Bengio}]{Goodfellow:2013}
+Ian~J. Goodfellow, David Warde-Farley, Mehdi Mirza, Aaron Courville, and Yoshua
+  Bengio. 2013.
+\newblock \href {http://dl.acm.org/citation.cfm?id=3042817.3043084} {Maxout
+  networks}.
+\newblock In \emph{Proceedings of the 30th International Conference on
+  International Conference on Machine Learning - Volume 28}, ICML'13, pages
+  III--1319--III--1327. JMLR.org.
+
+\bibitem[{He et~al.(2015)He, Zhang, Ren, and Sun}]{He:2015}
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2015.
+\newblock \href {https://doi.org/10.1109/ICCV.2015.123} {Delving deep into
+  rectifiers: Surpassing human-level performance on imagenet classification}.
+\newblock In \emph{Proceedings of the 2015 IEEE International Conference on
+  Computer Vision (ICCV)}, ICCV '15, pages 1026--1034, Washington, DC, USA.
+  IEEE Computer Society.
+
+\bibitem[{Hornik(1991)}]{Hornik:1991}
+Kurt Hornik. 1991.
+\newblock \href {https://doi.org/10.1016/0893-6080(91)90009-T} {Approximation
+  capabilities of multilayer feedforward networks}.
+\newblock \emph{Neural Netw.}, 4(2):251--257.
+
+\bibitem[{Johnson and Zhang(2017)}]{Johnson:2017}
+Rie Johnson and Tong Zhang. 2017.
+\newblock Deep pyramid convolutional neural networks for text categorization.
+\newblock In \emph{Proceedings of the 55th Annual Meeting of the Association
+  for Computational Linguistics (Volume 1: Long Papers)}, volume~1, pages
+  562--570.
+
+\bibitem[{Joulin et~al.(2016)Joulin, Grave, Bojanowski, and
+  Mikolov}]{Joulin:2016}
+Armand Joulin, Edouard Grave, Piotr Bojanowski, and Tomas Mikolov. 2016.
+\newblock \href {http://arxiv.org/abs/1607.01759} {Bag of tricks for efficient
+  text classification}.
+\newblock \emph{CoRR}, abs/1607.01759.
+
+\bibitem[{Kim(2014)}]{Kim:2014}
+Yoon Kim. 2014.
+\newblock \href {https://doi.org/10.3115/v1/D14-1181} {Convolutional neural
+  networks for sentence classification}.
+\newblock In \emph{Proceedings of the 2014 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 1746--1751. Association for
+  Computational Linguistics.
+
+\bibitem[{Klambauer et~al.(2017)Klambauer, Unterthiner, Mayr, and
+  Hochreiter}]{Klambauer:2017}
+G\"{u}nter Klambauer, Thomas Unterthiner, Andreas Mayr, and Sepp Hochreiter.
+  2017.
+\newblock \href
+  {http://papers.nips.cc/paper/6698-self-normalizing-neural-networks.pdf}
+  {Self-normalizing neural networks}.
+\newblock In I.~Guyon, U.~V. Luxburg, S.~Bengio, H.~Wallach, R.~Fergus,
+  S.~Vishwanathan, and R.~Garnett, editors, \emph{Advances in Neural
+  Information Processing Systems 30}, pages 971--980. Curran Associates, Inc.
+
+\bibitem[{Krizhevsky(2009)}]{Krizhevsky:2009}
+A.~Krizhevsky. 2009.
+\newblock Learning multiple layers of features from tiny images.
+\newblock Master's thesis, Computer Science Department, University of Toronto.
+
+\bibitem[{Levy and Goldberg(2014)}]{Levy:2014}
+Omer Levy and Yoav Goldberg. 2014.
+\newblock \href {https://doi.org/10.3115/v1/P14-2050} {Dependency-based word
+  embeddings}.
+\newblock In \emph{Proceedings of the 52nd Annual Meeting of the Association
+  for Computational Linguistics (Volume 2: Short Papers)}, pages 302--308.
+  Association for Computational Linguistics.
+
+\bibitem[{Maas et~al.(2013)Maas, Hannun, and Ng}]{Maas:2013}
+Andrew~L. Maas, Awni~Y. Hannun, and Andrew~Y. Ng. 2013.
+\newblock \href
+  {http://ai.stanford.edu/~amaas/papers/relu\_hybrid\_icml2013\_final.pdf}
+  {Rectifier nonlinearities improve neural network acoustic models}.
+\newblock In \emph{International Conference on Machine Learning (ICML)}.
+
+\bibitem[{Pagliardini et~al.(2018)Pagliardini, Gupta, and
+  Jaggi}]{Pagliardini:2018}
+Matteo Pagliardini, Prakhar Gupta, and Martin Jaggi. 2018.
+\newblock {Unsupervised Learning of Sentence Embeddings using Compositional
+  n-Gram Features}.
+\newblock In \emph{NAACL 2018 - Conference of the North American Chapter of the
+  Association for Computational Linguistics}.
+
+\bibitem[{Parascandolo et~al.(2016)Parascandolo, Huttunen, and
+  Virtanen}]{Parascandolo:2016}
+Giambattista Parascandolo, Heikki Huttunen, and Tuomas Virtanen. 2016.
+\newblock Taming the waves: sine as activation function in deep neural
+  networks.
+
+\bibitem[{Pascanu et~al.(2012)Pascanu, Mikolov, and Bengio}]{Pascanu:2013}
+Razvan Pascanu, Tomas Mikolov, and Yoshua Bengio. 2012.
+\newblock \href {http://arxiv.org/abs/1211.5063} {Understanding the exploding
+  gradient problem}.
+\newblock \emph{CoRR}, abs/1211.5063.
+
+\bibitem[{Ramachandran et~al.(2017)Ramachandran, Zoph, and Le}]{Ramach:2018}
+Prajit Ramachandran, Barret Zoph, and Quoc~V. Le. 2017.
+\newblock \href {http://arxiv.org/abs/1710.05941} {Searching for activation
+  functions}.
+\newblock \emph{CoRR}, abs/1710.05941.
+
+\bibitem[{Reimers and Gurevych(2017)}]{Reimers:2017}
+Nils Reimers and Iryna Gurevych. 2017.
+\newblock {Reporting Score Distributions Makes a Difference: Performance Study
+  of LSTM-networks for Sequence Tagging}.
+\newblock In \emph{Proceedings of the 2017 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 338--348, Copenhagen, Denmark.
+
+\bibitem[{Russakovsky et~al.(2015)Russakovsky, Deng, Su, Krause, Satheesh, Ma,
+  Huang, Karpathy, Khosla, Bernstein, Berg, and Fei-Fei}]{Russakovsky:2015}
+Olga Russakovsky, Jia Deng, Hao Su, Jonathan Krause, Sanjeev Satheesh, Sean Ma,
+  Zhiheng Huang, Andrej Karpathy, Aditya Khosla, Michael Bernstein,
+  Alexander~C. Berg, and Li~Fei-Fei. 2015.
+\newblock \href {https://doi.org/10.1007/s11263-015-0816-y} {Imagenet large
+  scale visual recognition challenge}.
+\newblock \emph{Int. J. Comput. Vision}, 115(3):211--252.
+
+\bibitem[{Schulz et~al.(2018)Schulz, Eger, Daxenberger, Kahse, and
+  Gurevych}]{Schulz:2018}
+Claudia Schulz, Steffen Eger, Johannes Daxenberger, Tobias Kahse, and Iryna
+  Gurevych. 2018.
+\newblock Multi-task learning for argumentation mining in low-resource
+  settings.
+\newblock In \emph{Proceedings of the 16th Annual Conference of the North
+  American Chapter of the Association for Computational Linguistics: Human
+  Language Technologies}, page to appear. Association for Computational
+  Linguistics.
+
+\bibitem[{Stab and Gurevych(2017)}]{Stab:2017}
+Christian Stab and Iryna Gurevych. 2017.
+\newblock Parsing argumentation structures in persuasive essays.
+\newblock \emph{Computational Linguistics}, 43(3):619--659.
+
+\bibitem[{Szegedy et~al.(2016)Szegedy, Ioffe, and Vanhoucke}]{Szegedy:2016}
+Christian Szegedy, Sergey Ioffe, and Vincent Vanhoucke. 2016.
+\newblock \href {http://arxiv.org/abs/1602.07261} {Inception-v4,
+  inception-resnet and the impact of residual connections on learning}.
+\newblock \emph{CoRR}, abs/1602.07261.
+
+\bibitem[{Xu et~al.(2016)Xu, Huang, and Li}]{Xu:2016}
+Bing Xu, Ruitong Huang, and Mu~Li. 2016.
+\newblock \href {http://arxiv.org/abs/1602.05980} {Revise saturated activation
+  functions}.
+\newblock \emph{CoRR}, abs/1602.05980.
+
+\bibitem[{Xu et~al.(2015)Xu, Wang, Chen, and Li}]{Xu:2015}
+Bing Xu, Naiyan Wang, Tianqi Chen, and Mu~Li. 2015.
+\newblock \href {http://arxiv.org/abs/1505.00853} {Empirical evaluation of
+  rectified activations in convolutional network}.
+\newblock \emph{CoRR}, abs/1505.00853.
+
+\end{thebibliography}

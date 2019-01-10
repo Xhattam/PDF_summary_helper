@@ -1,0 +1,127 @@
+\pdfoutput=1
+%
+% File emnlp2018.tex
+%
+%% Based on the style files for EMNLP 2018, which were
+%% Based on the style files for ACL 2018, which were
+%% Based on the style files for ACL-2015, with some improvements
+%%  taken from the NAACL-2016 style
+%% Based on the style files for ACL-2014, which were, in turn,
+%% based on ACL-2013, ACL-2012, ACL-2011, ACL-2010, ACL-IJCNLP-2009,
+%% EACL-2009, IJCNLP-2008...
+%% Based on the style files for EACL 2006 by 
+%%e.agirre@ehu.es or Sergi.Balari@uab.es
+%% and that of ACL 08 by Joakim Nivre and Noah Smith
+\documentclass[11pt,a4paper]{article}
+%\pdfoutput=1
+\PassOptionsToPackage{linktocpage}{hyperref}
+\usepackage[hyperref]{emnlp2018}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage{todonotes}
+\usepackage{amsmath,amssymb}
+
+\usepackage{url}
+
+\usepackage{booktabs}
+
+
+\usepackage{enumitem}
+
+\newcommand{\relu}{\textsf{relu}}
+\newcommand{\lrelua}{\textsf{lrelu-0.01}}
+\newcommand{\lrelub}{\textsf{lrelu-0.30}}
+\newcommand{\swish}{\textsf{swish}}
+\newcommand{\pentan}{\textsf{penalized tanh}}
+\newcommand{\arctid}{\textsf{arctid}}
+\newcommand{\elu}{\textsf{elu}}
+\newcommand{\minsin}{\textsf{minsin}}
+\newcommand{\maxtanh}{\textsf{maxtanh}}
+\newcommand{\mytanh}{\textsf{tanh}}
+\newcommand{\mysin}{\textsf{sin}}
+\newcommand{\maxsig}{\textsf{maxsig}}
+\newcommand{\selu}{\textsf{selu}}
+\newcommand{\linear}{\textsf{linear}}
+\newcommand{\sigmoid}{\textsf{sigmoid}}
+\newcommand{\cosid}{\textsf{cosid}}
+\newcommand{\cube}{\textsf{cube}}
+\newcommand{\maxouta}{\textsf{maxout-2}}
+\newcommand{\maxoutb}{\textsf{maxout-3}}
+\newcommand{\maxoutc}{\textsf{maxout-4}}
+\newcommand{\prelu}{\textsf{prelu}}
+\newcommand{\best}{\texttt{best}}
+\newcommand{\avg}{\texttt{mean}}
+
+
+\aclfinalcopy % Uncomment this line for the final submission
+\def\aclpaperid{256} %  Enter the acl Paper ID here
+
+%\setlength\titlebox{5cm}
+% You can expand the titlebox if you need extra space
+% to show all the authors. Please do not make the titlebox
+% smaller than 5cm (the original size); we will check this
+% in the camera-ready version and ask you to change it back.
+
+\newcommand\BibTeX{B{\sc ib}\TeX}
+\newcommand\confname{EMNLP 2018}
+\newcommand\conforg{SIGDAT}
+
+\title{Is it Time to Swish? \\ Comparing Deep Learning Activation Functions Across NLP tasks}
+
+\author{Steffen Eger, Paul Youssef, Iryna Gurevych \\
+  Ubiquitous Knowledge Processing Lab (UKP-TUDA) \\
+  Department of Computer Science \\
+  Technische Universit\"at Darmstadt\\
+  {\tt www.ukp.tu-darmstadt.de} 
+  %\\\And
+  %Second Author \\
+  %Affiliation / Address line 1 \\
+  %Affiliation / Address line 2 \\
+  %Affiliation / Address line 3 \\
+  %{\tt email@domain} \\
+  }
+
+\date{}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Activation functions play a crucial role in neural networks because they are the non-linearities which have been attributed to the success story of deep learning. One of the currently most popular activation functions is ReLU, but several competitors have recently been proposed or `discovered', including LReLU functions and \swish. While most works compare newly proposed activation functions on few tasks (usually from image classification) and against few competitors (usually ReLU), we perform the first large-scale comparison of 21 activation functions across eight different NLP tasks. We find that a largely unknown activation function performs most stably across all tasks, the so-called \pentan{} function. We also show that it can successfully replace the \sigmoid{} and \mytanh{} gates in LSTM cells, leading to a 2 percentage point (pp) improvement over the standard choices on a challenging NLP task. 
+\end{abstract}
+
+\section{Introduction}\label{sec:introduction}
+\input{introduction}
+
+\section{Theory}\label{sec:theory}
+\input{theory}
+
+\section{Experiments}\label{sec:experiments}
+\input{experiments}
+
+\section{Analysis \& Discussion}\label{sec:analysis}
+\input{analysis}
+
+%\section{Related Work}\label{sec:related}
+
+%\section{Problems}
+%\input{problems}
+
+\section{Concluding remarks}\label{sec:conclusion}
+\input{conclusion}
+
+\section*{Acknowledgments}
+We thank Teresa B\"otschen, Nils Reimers and the anonymous reviewers for helpful comments.
+This work has been supported by the
+German Federal Ministry of Education and Research
+(BMBF) under the promotional reference
+01UG1816B (CEDIFOR).
+
+\bibliography{emnlp2018-2}
+\bibliographystyle{acl_natbib}
+
+%\section*{Appendix}
+\appendix
+\input{appendix}
+
+
+\end{document}

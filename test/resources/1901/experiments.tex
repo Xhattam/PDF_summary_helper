@@ -1,0 +1,196 @@
+We conduct experiments using three neural network types and three types of NLP tasks, described in \S\ref{sec:1}, \S\ref{sec:2}, and \S\ref{sec:3} below.
+\subsection{MLP \& Sentence Classification}\label{sec:1}
+\paragraph{Model}
+We experiment with a multi-layer perceptron (MLP) applied to sentence-level classification tasks. That is, input to the MLP is a sentence or short text, represented as a fixed-size vector embedding. The output of the MLP is a label which classifies the sentence or short text. We use two sentence representation techniques, namely, Sent2Vec \cite{Pagliardini:2018}, of dimensionality 600, and InferSent \cite{Conneau:2017}, of dimensionality 4096. Our MLP has the form:
+\begin{align*}
+  \mathbf{x}_i &= f(\mathbf{x}_{i-1}\cdot \mathbf{W}_i+\mathbf{b}_i)\\
+  \mathbf{y} &= \text{softmax}(\mathbf{x}_{N}\mathbf{W}_{N+1}+\mathbf{b}_{N+1})
+\end{align*}
+where $\mathbf{x}_0$ is the input representation, $\mathbf{x}_1,\ldots,\mathbf{x}_{N}$ are hidden layer representations, and $\mathbf{y}$ is the output, a probability distribution over the classes in the classification task. Vectors $\mathbf{b}$ and matrices $\mathbf{W}$ are the learnable parameters of our network. The activation function is given by $f$ and ranges over the choices described in \S\ref{sec:theory}. 
+\paragraph{Data}
+We use four sentence classification tasks, namely: movie review classification (MR), subjectivitiy classification (SUBJ), 
+question type classification (TREC), 
+and classifying whether a sentence contains an argumentation structure of a certain type (claim, premise, major claim) or else is non-argumentative (AM). The first three datasets are standard sentence classification datasets and contained in the SentEval framework.\footnote{\url{https://github.com/facebookresearch/SentEval}} We choose the AM dataset for task diversity, and derive %the AM dataset 
+it by projecting token-level annotations in the dataset from \citet{Stab:2017} to the sentence level. In the rare case ($<$5\% of the cases) when a sentence contains multiple argument types, we choose one based on the ordering Major Claim (MC) $>$ Claim (C) $>$ Premise (P). Datasets and examples are listed in Table \ref{table:data_sent}.
+
+\input{tables/tasks}
+
+
+\paragraph{Approach}
+We consider 7 ``mini-experiments'':
+\begin{itemize}[noitemsep,leftmargin=0.6cm]
+  \item (1): MR dataset with Sent2Vec-unigram embeddings as input and 1\% of the full data as training data; (2): the same mini-experiment with 50\% of the full data as training data. In both cases, the dev set comprises 10\% of the full data and the rest is for testing. 
+  \item (3,4): SUBJ with InferSent embeddings and likewise 1\% and 50\% of the full data as train data, respectively.
+  \item (5): The TREC dataset with original split in train and test; 50\% of the train split is used as dev data. 
+  \item (6): The AM dataset with original split in train, dev, and test \cite{Eger:2017}, and with InferSent input embeddings. (7): the same mini-experiment with Sent2Vec-unigram embeddings. 
+\end{itemize}
+We report accuracy for mini-experiments (1-5) and macro-F1 for (6-7). We report macro-F1 for (6-7) because the AM dataset is imbalanced.  
+
+%Some setups, such as the input representation, were randomly matched to the tasks. 
+The motivation behind choosing different input embeddings for different tasks was to investigate a wider variety of conditions. 
+%The motivation behind using subsets of the full data for training in case of MR and SUBJ was to induce diverse data size conditions; 
+Choosing subsets of the full data had the same intention. 
+%to see if the choice of activation function matters (differently) under different data size conditions; 
+%we did this for MR and SUBJ because, unlike AM and TREC, they have no pre-specified splits into train and test.   
+%The overall goal of varying some of these parameters (train/test splits, input embeddings) was to explore a larger search space. 
+
+For all 7 mini-experiments, we draw the same 200 randomly chosen hyperparameters from the ranges indicated in Table \ref{table:hyperparams_sent}. 
+%The hyperparameters concern the optimizer chosen for the MLP; the number $N$ of hidden layers; the dropout value \cite{Srivastava:2014} applied on each hidden layer; the number of hidden units in each hidden layer (identical numbers across all layers); the learning rate; and the initializer. 
+All experiments are conducted in keras.\footnote{\url{https://keras.io/}} %Each of the 200 hyperparameter configurations is run with 5 random initializations of weight matrices and the average is stored. 
+
+For each of the 21 different activation functions detailed in \S\ref{sec:theory}, we conduct each mini-experiment with the 200 randomly chosen hyperparameters. All activation functions use the same hyperparameters and the same train, dev, and test splits.
+
+%Overall, we run $21\times 200\times 7\times 5 = 147,000$ experiments. 
+
+We store two results for each mini-experiment, namely: (i) the test result corresponding to the \textbf{best} (\best) dev performance; (ii) the \textbf{average} (\avg) test result across all hyperparameters. The \best{} result scenario mirrors standard optimization in machine learning: it indicates the score one can obtain with an activation function when %it is used in
+the MLP is well-optimized. The \avg{} result scenario is an indicator for what one can expect when hyperparameter optimization is `shallow' (e.g., because computing times are prohibitive): it gives the average performance for randomly chosen hyperparameters. We note that we run each hyperparameter combination %is run 
+with 5 different random weight initializations and all the reported scores (best dev score, best \best{}, best \avg{}) are averages over these 5 random initializations. 
+
+Finally, we set the following hyperparameters for all MLP experiments: patience of 10 for early stopping, batch size 16, 100 epochs for training. 
+
+\input{tables/hyperparams_sent}
+
+\paragraph{Results}
+Figure \ref{fig:sent} shows \best{} and \avg{} results, averaged over all 7 mini-experiments, for each activation function. To make individual scores comparable across mini-experiments, we perform max normalization and divide each score by the maximum score achieved in any given mini-experiment (for \best{} and \avg{}, respectively) before averaging.\footnote{We chose max normalization so that certain tasks/mini-experiments would not unduly dominate our averaged scores. Overall, our averaged scores are not (much) affected by this decision, however: the Spearman correlation of rankings of activation functions under max normalization and under no max normalization are above 0.98 in all our three classification scenarios considered in \S\ref{sec:1},\S\ref{sec:2},\S\ref{sec:3}.}
+
+For \best{}, the top performers are the rectifier functions (\relu{}, \lrelua{}, \prelu{}) as well as maxout and \pentan{}. The newly discovered activation functions lag behind, with the best of them being \minsin{} and \swish{}. \linear{} is worst, together with \elu{} and \cube. Overall, %we see, however, that 
+the difference between the best activation function, \relu{}, and the worst, \linear, is only roughly 2pp, however. This means that if hyperparameter search is done carefully,  the choice of activation function is less important for these sentence classification tasks. Particularly the (binary) tasks MR and SUBJ appear robust against the choice of activation function, with the difference between the best and worst function being always less than 1pp, in all settings. For TREC and AM, the situation is slightly different: for TREC, the difference is 2pp (\swish{} vs.\ \maxsig) and for AM, it is 3pp using InferSent embeddings (\swish{} vs.\ \cube) and 12pp using Sent2Vec embeddings (\relu{} vs.\  \linear). It is noteworthy that \swish{} wins 2 out of 3 cases in which the choice of activation function really matters. 
+\begin{figure}[htb]
+  \centering
+  %\scalebox{0.5}{\input{plots/sent3.tex}}
+  \scalebox{0.5}{\input{plots/sent.tex}}
+  \caption{Sentence Classification. Left y-axis: \best. Right y-axis: \avg{}. Score on y-axes is the average over all mini-experiments.}
+  \label{fig:sent}
+\end{figure}
+
+\avg{} results are very different from \best{} results. Here, somewhat surprisingly, the oscillating \mysin{} function wins, followed by \pentan{}, maxout and \swish. The difference between the best \avg{} function, \mysin, and the worst, \cube, is more than 30pp. This means that using \cube{} is much riskier and requires more careful hyperparameter search compared to \mysin{} and the other top performers. 
+%Figure \ref{fig:sent} also shows that better \best{} performers tend to be better \avg{} performers, and vice versa. 
+%have better average performance and vice versa. 
+
+\subsection{CNN \& Document Classification}\label{sec:2}
+\paragraph{Model} Our second paradigm is document classification using a CNN. This approach has been popularized in NLP by the ground-breaking work of \citet{Kim:2014}. Even though shallow CNNs do not reach state-of-the-art results on large datasets anymore \cite{Johnson:2017}, simple approaches like (shallow) CNNs are still very competitive for smaller datasets \cite{Joulin:2016}. 
+
+Our model operates on token-level and first embeds a sequence of tokens $x_1,\ldots,x_n$, represented as 1-hot vectors, into learnable embeddings $\mathbf{x}_1,\ldots,\mathbf{x}_n$. The model then applies 1D-convolution on top of these embeddings. That is, a filter $\mathbf{w}$ of size $h$ takes $h$ successive embeddings $\mathbf{x}_{i:i+h-1}$, performs a scalar product and obtains a feature $c_i$:
+\begin{align*}
+  c_i = f(\mathbf{w}\cdot \mathbf{x}_{i:i+h-1}+b).
+\end{align*}
+Here, $f$ is the activation function and $b$ is a bias term. We take the number $n_k$ of different filters as a hyperparameter. When our network has multiple layers, we stack another convolutional layer on top of the first (in total we have $n_k$ outputs at each time step), and so on. Our penultimate layer is a global max pooling layers that selects the maximum from each feature map. A final softmax layer terminates the network. 
+\paragraph{Data} We use two document classification tasks, namely: 20 Newsgroup (NG) and Reuters-21578 R8 (R8). Both datasets are standard document classification datasets. In NG, the goal is to classify each document into one of 20 newsgroup classes (alt.atheism, sci.med, sci.space, etc.). In R8, the goal is to classify Reuters news text into one of eight classes (crude, earn, grain, interest, etc.).  We used the preprocessed files from \url{https://www.cs.umb.edu/~smimarog/textmining/datasets/} (in particular, stopwords are removed and the text is stemmed).
+\paragraph{Approach}
+We consider 4 mini-experiments:
+\begin{itemize}[noitemsep,leftmargin=0.6cm]
+\item (1,2) NG dataset with 5\% and 50\%, respectively of the full data as train data. In both cases, 10\% of the full data is used as dev data, and the rest as test data.  
+\item (3,4) Same as (1,2) for R8. 
+%R8 dataset with same specifications as for NG.
+\end{itemize}
+We report accuracy for all experiments. We use a batch size of 64, 50 epochs for training, and a patience of 10. For all mini-experiments, we again draw 200 randomly chosen hyperparameters from the ranges indicated in Table \ref{table:hyperparams_sent}. 
+%As for the train/dev/test splits, 
+The hyperparameters and train/dev/test splits are the same for all activation functions. 
+
+\paragraph{Results}
+Figure \ref{fig:doc} shows \best{} and \avg{} results, averaged over all mini-experiments. This time, the winners for \best{} are \elu{}, \selu{} (again two members from the rectifier family), and \maxoutb{}, but the difference between \maxoutb{} and several lower ranked functions is minimal. The \cube{} function is again worst and \sigmoid{} and \cosid{} have similarly bad performance. Except for \minsin{}, the newly proposed activation functions from \citet{Ramach:2018} again considerably lag behind. The most stable activation functions are the maxout functions as well as \pentan{}, \mytanh{} and \mysin{}.  
+
+\begin{figure}[!htb]
+\centering
+%\scalebox{0.5}{\input{plots/doc2}}
+\scalebox{0.5}{\input{plots/doc}}
+\caption{Doc classification.}
+\label{fig:doc}
+\end{figure}
+
+\subsection{RNN \& Sequence Tagging}\label{sec:3}
+\paragraph{Model} Our third paradigm is sequence tagging, a ubiquitous model type in NLP. In sequence tagging, a sequence of input tokens $w_1,\ldots,w_K$ is mapped to a sequence of labels $y_1,\ldots,y_K$. Classical sequence tagging tasks include POS tagging, chunking, NER, discourse parsing \cite{Braud:2017}, and argumentation mining \cite{Eger:2017,Schulz:2018}. We use a standard recurrent net for sequence tagging, whose form is:
+\begin{align*}
+  \mathbf{h}_i &= f(\mathbf{h}_{i-1}\mathbf{W}+\mathbf{w}_i\cdot\mathbf{U}+\mathbf{b})\\
+  \mathbf{y}_i &= \text{softmax}(\mathbf{h}_i\mathbf{V}+\mathbf{c})
+\end{align*}
+Here, $\mathbf{w}_i$ are (pre-trained) word embeddings of words $w_i$. Vectors $\mathbf{b},\mathbf{c}$ and matrices $\mathbf{U},\mathbf{V},\mathbf{W}$ are parameters to be learned during training. The above describes an RNN with only one hidden layer, $\mathbf{h}_i$, at each time step, but we consider the generalized form with $N\ge 1$ hidden layers; we also choose a bidirectional RNN in which the hidden outputs of a forward RNN and a backward RNN are combined. 
+RNNs are particularly deep networks---indeed, the depth of the network corresponds to the length of the input sequence---which makes them particularly susceptible to the vanishing gradient problem \cite{Pascanu:2013}. 
+
+%[Say a word on LSTMs]
+Initially, we do not consider the more popular LSTMs here for reasons indicated below. However, we include a comparison after discussing the RNN performance. 
+%for two reasons: (i) activation functions in LSTMs usually take other roles than in standard RNNs, namely, that of gating (gate is open, closed, or in-between), and thus, the expectation is that the choice of activation function is either not as important or restricted to certain `binary-like' function; (ii) with proper initialization, standard RNNs have been shown to be able to perform as well, or even better, than LSTMs \cite{Le:2015}. However, we will also compare RNNs to LSTMs, albeit in fewer scenarios. 
+
+\paragraph{Data}
+We use two sequence tagging tasks, namely: English POS tagging (POS), and token-level argumentation mining (TL-AM) using the same dataset (consisting of student essays) as for the sentence level experiments. In token-level AM, we tag each token with a BIO-label plus the component type, i.e., the label space is $\mathcal{Y}=\{\text{B},\text{I}\}\times\{\text{MC},\text{C},\text{P}\}\cup\{\text{O}\}$, where 
+%MC stands for major claim, C for claim, and P for premise, and `
+`O'' is a label for non-argumentative tokens. The motivation for using TL-AM is that, putatively, AM has more long-range dependencies than POS or similar sequence tagging tasks such as NER, because argument components are much longer than named entities and component labels also %do not 
+depend less %very much 
+on the current token.  
+
+%Dataset statistics are shown in Table \ref{table:data_sent}. 
+\paragraph{Approach} We consider 6 mini-experiments: 
+\begin{itemize}[noitemsep,leftmargin=0.6cm]
+  \item (1): TL-AM with Glove-100d word embeddings and 5\% of the original training data as train data; (2) the same with 30\% of the original training data as train data. In both cases, dev and test follow the original train splits \cite{Eger:2017}. 
+  \item (3,4) Same as (1) and (2) but with 300d Levy word embeddings \cite{Levy:2014}.
+  \item (5,6): POS with Glove-100d word embeddings and 5\% and 30\%, respectively, of the train data of a pre-determined train/dev/test split (13k/13k/178k tokens). Dev and test are fixed in both cases.    
+\end{itemize}
+We report macro-F1 for mini-experiments (1-4) and accuracy for (5-6). For our RNN implementations, we use the accompanying code of (the state-of-the-art model of) \citet{Reimers:2017}, which is implemented in keras. The network uses a CRF layer as an output layer. We use a batch size of 32, train for 50 epochs and use a patience of 5 for early stopping.
+\paragraph{Results}
+Figure \ref{fig:seq} shows \best{} and \avg{} results, averaged over all 6 mini-experiments, for each activation function. We exclude \prelu{} and the maxout functions because the keras implementation does not natively support these activation functions for RNNs. We also exclude the \cube{} function because it performed very badly.  \begin{figure}[!htb]
+\centering
+\scalebox{0.5}{
+%\input{plots/seq2}}
+\input{plots/seq}}
+\caption{Sequence tagging.}
+\label{fig:seq}
+\end{figure}
+
+Unlike for sentence classification, there are much larger differences between the activation functions. For example, there is almost 20pp difference between the best \best{} activation functions: \relu{}, \lrelua{}, \swish{}, \pentan{}, and the worst ones: \linear{}, \cosid{}, and \sigmoid{} (the differences were larger had we included \cube{}). Interestingly, this difference is mostly due to the TL-AM task: for POS, there is only 3pp difference between the best function (\sigmoid{} (sic!), though with almost zero margin to the next best ones) and the worst one (\linear), while this difference is almost 40pp for TL-AM. 
+%If we follow conventional wisdom, then we would speculate that POS tagging is a too simple task where the label for a token only depends on the current token and some small context. Thus, the task apparently lacks long-range dependencies, as we had reasoned, which may cause different activation functions to have little influence on performance.
+This appears to confirm our concerns regarding the POS tagging task as not being challenging enough due to lack of, e.g., long-range dependencies.
+
+The four best \best{} activation functions in Figure \ref{fig:seq} are also the functions with the best \avg{} results, i.e., they are most stable over different hyperparameters. %choices. 
+The clear winner in this category is \pentan{} with 100\% \avg{} score, followed by \swish{} with 91\%. Worst is \cosid{} with 30\%. It is remarkable how large the difference between \mytanh{} and \pentan{} is both for \best{} and \avg{}---7pp and 20pp, respectively, which is much larger than the differences between the analogous pair of LReLU and \relu{}. This appears to make a strong case for the importance of the slope around the origin, as suggested in \citet{Xu:2016}. 
+%, lacking, e.g., long-range dependencies  
+
+%\begin{table}[!htb]
+%  \centering
+%  \begin{tabular}{lrr}
+%    \toprule
+%    Function & Best & Avg \\ \midrule
+%    \relu & 52.95 \\
+%    \lrelua & 52.92 \\
+%    \swish & 52.66 \\
+%    \lrelub & 52.19 \\
+%    \pentan & 51.76 \\
+%    \arctid & 50.23 \\
+%    \midrule
+%    \elu & 48.72 \\
+%    \minsin & 48.43 \\
+%    \maxtanh & 47.42 \\
+%    \mytanh & 46.74 \\
+%    \mysin & 46.00 \\
+%    \maxsig & 45.54 & \\
+%    \selu & 44.72 & \\
+%    \linear & 42.20 & \\
+%    \midrule
+%    \sigmoid & 39.58 & \\
+%    \cosid & 34.76 & \\
+%    \cube & 11.33 & \\
+%  \end{tabular}
+%  \caption{ArgMin PE, macro-F1 scores %in \%.}
+%  \label{table:seq_pe}
+%\end{table}
+
+\paragraph{LSTM vs.\ RNN} Besides an RNN, we also implemented a more popular RNN model with (bidirectional) LSTM blocks in place of standard hidden layers. Standard LSTM units follow the equations (simplified):
+\begin{align*}
+  \mathbf{f}_t &= \sigma([\mathbf{h}_{t-1};\mathbf{x}_t]\cdot \mathbf{W}_f),\\
+  \mathbf{i}_t &= \sigma([\mathbf{h}_{t-1};\mathbf{x}_t]\cdot \mathbf{W}_i),\\
+  %&\vdots \\
+  \mathbf{o}_t &= \sigma([\mathbf{h}_{t-1};\mathbf{x}_t]\cdot \mathbf{W}_o)\\
+  \mathbf{c}_t &= \mathbf{f}_t\odot \mathbf{c}_{t-1}+\mathbf{i}_t\odot\tau([\mathbf{h}_{t-1};\mathbf{x}_t]\cdot \mathbf{W}_c)\\
+  \mathbf{h}_t &= \mathbf{o}_t\odot \tau(\mathbf{c}_t),
+\end{align*}
+where $\mathbf{f}_t$ and $\mathbf{i}_t$ are perceived of as \emph{gates} that control information flow,
+%(further gates and equations skipped for readability), 
+$\mathbf{x}_t$ is the input at time $t$ and $\mathbf{h}_t$ is the hidden layer activation. In keras (and most standard references), $\sigma$ is the (hard) sigmoid function, and $\tau$ is the \mytanh{} function. 
+
+We ran an LSTM on the TL-AM dataset with Levy word embeddings and 5\% and 30\% data size setup. We varied $\sigma$ and $\tau$ independently, keeping the respective other function at its default. 
+
+We find that the top two choices for $\tau$ are \pentan{} and \mytanh{} (margin of 10pp), given that $\sigma$ is sigmoid. For $\tau=$ \mytanh{}, the best choices are $\sigma=$ \pentan{}, \sigmoid, and \mytanh{}. All other functions perform considerably worse. Thus, the top-performers are all saturating functions, indicating the different roles activation functions play in LSTMs---those of gates---compared to standard layers. It is worth mentioning that choosing $\sigma$ or $\tau$ as \pentan{} is on average better than the standard choices for $\sigma$ and $\tau$. %[Moreover, when we choose both $\sigma$ and $\tau$ as \pentan{}, then ...]
+Indeed, choosing $\tau=\sigma=$ \pentan{} is on average 2pp better than the default choices of $\tau,\sigma$.
+%and is on par with the choice $\tau=$ \sigmoid{} and $\sigma=$ \pentan{}. 
+
+It is further worth mentioning that the best \best{} results for the LSTM are roughly 5pp better (absolute) than the best corresponding choices for the simple RNN. 
+

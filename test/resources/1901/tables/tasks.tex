@@ -1,0 +1,25 @@
+\begin{table*}[!htb]
+\centering
+%\footnotesize
+\small
+\begin{tabular}{llccll}
+\toprule
+\textbf{Task} & \textbf{Type} & \textbf{Size} & \textbf{C} & \textbf{Example} \\ 
+\midrule
+{AM} & Argumentation & 7k  & 4 &
+Not cooking fresh food will lead to lack of nutrition. \textit{(claim)} 
+ \\
+{MR} & Sentiment & 11k & 2 & Too slow for a younger crowd , too shallow for an older one. \textit{(neg)} \\
+{SUBJ} & Subjectivity & 10k & 2 & A movie that doesn’t aim too high , but doesn’t need to. \textit{(subj)} \\
+{TREC} & Question-types & 6k & 6 & What's the Olympic Motto? \textit{(description)} \\
+\midrule
+NG & Doc classification & 18k & 20 & [...] You can add "dark matter" and quarks [...] (\emph{sci.space})\\
+R8 & Doc classification & 7k & 8 & bowater industries profit exceed [...] (\emph{earn})\\
+\midrule
+POS & POS tagging & 204k & 17 & What/\emph{PRON} to/\emph{PART} feed/\emph{VERB} my/\emph{PRON} dog/\emph{NOUN} [...]\\
+TL-AM & Token-level AM & 148k & 7 & [...] I/\emph{O} firmly/\emph{O} believe/\emph{O} that/\emph{O} we/\emph{B-MC} should/\emph{I-MC} [...]\\
+\bottomrule
+\end{tabular}
+\caption{Evaluation tasks used in our experiments, grouped by task type (sentence classification, document classification, sequence tagging), with statistics and examples. C is the number of classes to predict.}
+\label{table:data_sent}
+\end{table*}

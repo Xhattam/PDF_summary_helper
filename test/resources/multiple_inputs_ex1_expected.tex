@@ -1,0 +1,144 @@
+\begin{document}
+\maketitle
+\begin{abstract}
+Activation functions play a crucial role in neural networks because they are the non-linearities which have been attributed to the success story of deep learning. One of the currently most popular activation functions is ReLU, but several competitors have recently been proposed or `discovered', including LReLU functions and \swish. While most works compare newly proposed activation functions on few tasks (usually from image classification) and against few competitors (usually ReLU), we perform the first large-scale comparison of 21 activation functions across eight different NLP tasks. We find that a largely unknown activation function performs most stably across all tasks, the so-called \pentan{} function. We also show that it can successfully replace the \sigmoid{} and \mytanh{} gates in LSTM cells, leading to a 2 percentage point (pp) improvement over the standard choices on a challenging NLP task. 
+\end{abstract}
+
+\section{Introduction}
+
+\section{Theory}
+
+\paragraph{Activation functions} 
+
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}{ll}
+  \toprule
+    \sigmoid & $f(x)=\sigma(x)=1/(1+\exp(-x))$\\
+    %\mytanh & \\
+    \swish & $f(x)=x\cdot \sigma(x)$\\
+    \maxsig & $f(x)=\max\{x,\sigma(x)\}$\\
+    \cosid & $f(x)=\cos(x)-x$\\
+    \minsin & $f(x)=\min\{x,\sin(x)\}$\\
+    \arctid & $f(x)=\arctan(x)^2-x$\\
+    \maxtanh & $f(x)=\max\{x,\tanh(x)\}$\\
+    \midrule
+    \lrelua & $f(x)=\max\{x,0.01x\}$ \\
+    \lrelub & $f(x)=\max\{x,0.3x\}$ \\
+    {\small \pentan} & $f(x)=\begin{cases}\tanh(x) & x>0,\\ 0.25\tanh(x) & x\le 0\end{cases}$\\
+    \bottomrule
+  \end{tabular}
+  \caption{Top: \sigmoid{} activation function as well as 6 top performing activation functions from \citet{Ramach:2018}. Bottom: the LReLU functions with different parametrizations as well as \pentan{}.}
+  \label{table:functions}
+\end{table}
+
+\paragraph{Properties of activation functions} 
+
+\begin{table*}[!htb]
+\centering
+\footnotesize
+\begin{tabular}{llll}
+  \toprule
+  Property & Description & Problems & Examples \\ \midrule
+  derivative & $f'$ & $>1$ exploding gradient (e) &  \sigmoid{} (v), \mytanh{} (v), \cube{} (e)\\
+  & & $<1$ vanishing (v) & \\
+  zero-centered & range centered around zero? &   if not, slower learning & \mytanh{} ($+$), \relu{} ($-$) \\ 
+  saturating & finite limits & vanishing gradient in the limit & \mytanh{}, \pentan{}, \sigmoid{}\\
+  monotonicity & $x>y\implies f(x)\ge f(y)$ & unclear & exceptions: \mysin{}, \swish{}, \minsin{} 
+  \\ \bottomrule
+ \end{tabular}
+ \caption{Frequently cited properties of activation functions}.
+ \label{table:properties}
+\end{table*}
+
+\section{Experiments}\label{sec:experiments}
+
+\subsection{MLP \& Sentence Classification}\label{sec:1}
+
+\paragraph{Model}
+
+\begin{align*}
+  \mathbf{x}_i &= f(\mathbf{x}_{i-1}\cdot \mathbf{W}_i+\mathbf{b}_i)\\
+  \mathbf{y} &= \text{softmax}(\mathbf{x}_{N}\mathbf{W}_{N+1}+\mathbf{b}_{N+1})
+\end{align*}
+
+\paragraph{Approach}
+
+\begin{itemize}[noitemsep,leftmargin=0.6cm]
+  \item (1): MR dataset with Sent2Vec-unigram embeddings as input and 1\% of the full data as training data; (2): the same mini-experiment with 50\% of the full data as training data. In both cases, the dev set comprises 10\% of the full data and the rest is for testing. 
+  \item (3,4): SUBJ with InferSent embeddings and likewise 1\% and 50\% of the full data as train data, respectively.
+  \item (5): The TREC dataset with original split in train and test; 50\% of the train split is used as dev data. 
+  \item (6): The AM dataset with original split in train, dev, and test \cite{Eger:2017}, and with InferSent input embeddings. (7): the same mini-experiment with Sent2Vec-unigram embeddings. 
+\end{itemize}
+
+\paragraph{Results}
+
+\begin{figure}[htb]
+  \centering
+  %\scalebox{0.5}{\input{plots/sent3.tex}}
+  \scalebox{0.5}{\input{plots/sent.tex}}
+  \caption{Sentence Classification. Left y-axis: \best. Right y-axis: \avg{}. Score on y-axes is the average over all mini-experiments.}
+  \label{fig:sent}
+\end{figure}
+
+\subsection{CNN \& Document Classification}
+
+\paragraph{Model}
+
+\begin{align*}
+  c_i = f(\mathbf{w}\cdot \mathbf{x}_{i:i+h-1}+b).
+\end{align*}
+
+\paragraph{Approach}
+
+\begin{itemize}[noitemsep,leftmargin=0.6cm]
+\item (1,2) NG dataset with 5\% and 50\%, respectively of the full data as train data. In both cases, 10\% of the full data is used as dev data, and the rest as test data.  
+\item (3,4) Same as (1,2) for R8. 
+%R8 dataset with same specifications as for NG.
+\end{itemize}
+
+\paragraph{Results}
+
+\begin{figure}[!htb]
+\centering
+%\scalebox{0.5}{\input{plots/doc2}}
+\scalebox{0.5}{\input{plots/doc}}
+\caption{Doc classification.}
+\label{fig:doc}
+\end{figure}
+
+\subsection{RNN \& Sequence Tagging}
+\paragraph{Model}
+
+
+
+
+
+
+\section{Analysis \& Discussion}\label{sec:analysis}
+\input{analysis}
+
+%\section{Related Work}\label{sec:related}
+
+%\section{Problems}
+%\input{problems}
+
+\section{Concluding remarks}\label{sec:conclusion}
+\input{conclusion}
+
+\section*{Acknowledgments}
+We thank Teresa B\"otschen, Nils Reimers and the anonymous reviewers for helpful comments.
+This work has been supported by the
+German Federal Ministry of Education and Research
+(BMBF) under the promotional reference
+01UG1816B (CEDIFOR).
+
+\bibliography{emnlp2018-2}
+\bibliographystyle{acl_natbib}
+
+%\section*{Appendix}
+\appendix
+\input{appendix}
+
+
+\end{document}

@@ -1,0 +1,37 @@
+\subsection{Size matters}
+People compare sentence embeddings of different sizes, but at the same time state that the evaluation measure, log.reg., performs better with higher-dimensional inputs.
+
+\textbf{TODO}: evaluate 100,200,...,2000 dimensional word2vec embeddings.
+
+\subsection{Comparing the uncomparable}
+Citing numbers from previous papers which evaluated differently makes no sense.
+
+\textbf{TODO}: Give numbers from sent2vec paper and our own evaluation of the method \todo{AR: we could even compare senteval, our own framework, and their values.}
+
+\subsection{Which Classifier to use?}
+Most researchers feed in to log.reg., some others feed sentence embeddings to deep averaging networks and CNNs (google paper). This makes things very uncomparable. The questions that arises is among others: is log.reg.\ eval justified when the embeddings would subsequently be used with more powerful networks anyway?
+
+\textbf{TODO}: eval google embeddings in our own framework and perform some correlation analyses between log.reg.\ and CNN or deep average networks.
+
+\todo{AR: Maybe even: Evaluate infersent with deep network, our own method with deep network. compare. We can also show how the effect is xling. do we get a bigger drop then with deep averaging, CNN? not suitable in many scenarios then.}
+
+\subsection{Using cosine and Pearson correlation for evaluation of embeddings}
+Problems: cosine and Pearson are arbitrary choices. Cosine/Pearson are not robust against certain normalizations. These kinds of evaluations may therefore be misleading. Better: learn the embedding function. Moreover: the google guys propose a variant of cosine because it ``performed better'' \todo{We need to propose solutions for being accepted. Learning sim could be one of them.}
+
+\textbf{TODO}: make an experiment with learned embedding function vs.\ cosine and the cosine variant suggested in the google paper. Use concatenated p-means as an illustration.
+
+\subsection{Several simple sentence embeddings techniques perform quite badly}
+They even underperform word2vec\todo{Glove trained on huge huge corpus, not word2vec} embeddings. Problems: sent2vec, SIF, Siamese CBOW were all either evaluated for cosine or compared to very bad, and arbitrary, reference points (sent2vec). \todo{AR: Well, some methods might serve a purpose: retrieval. but I show that sent2vec for example is crap in retrieval. SIF might be better.}
+
+\subsection{Using GPU vs.\ CPU}
+Well, that's a minor point \todo{AR: This is mostly comparing liblinear against pytorch logreg implementation. Not GPU vs CPU actually. So it depends on how you implement logreg, actually.}
+
+\subsection{The universal tasks are not universal}
+For some the majority baseline is quite high. They're all on sentiment. \todo{AR: Yeah, but there is also this COCO retrieval stuff and semantic similarity we ignored due to weird evaluation}
+
+\subsection{Hyper-Parameter tuning of log.reg.}
+Optimizing learning rate may be crucial? \todo{AR: I would rather say: if you dont do hyperparam optimization properly you will get results that are worse than with proper hyperparams PER EMBEDDING TYPE.}
+
+\subsection{Embeddings are trained on different data}
+But people make claims about the techniques (glove better than word2vec), which is something to keep in mind. \todo{AR: Yes its all about the training data. Similar to NMT. But people already know this I guess?}
+

@@ -1,0 +1,14 @@
+%Which one should we use?
+%
+%Empirical comparison of rectifiers \cite{Xu:2015}
+We have conducted the first large scale comparison of activation functions across several different NLP tasks (and task types) and using different popular neural network types. 
+%To do so, we ran roughly X00K experiments. 
+Our main focus was on so-called scalar activation functions, but we also partly included the more costly `many-to-one' %activation functions such as 
+maxout functions. 
+%that have higher resource demands. 
+
+Our findings suggest that the rectifier functions (and the similarly shaped \swish{}) can be top performers for each task, but their performance is unstable and cannot be predicted a priori. One of our major findings is that, in contrast, the saturating \pentan{} function performs much more stably in this respect and can with high probability be expected to perform well across tasks as well as different choices of hyperparameters. This appears to make it the method of choice particularly when hyperparameter optimization is costly. When hyperparameter optimization is cheap, we recommend to consider the activation function as another hyperparameter and choose it, e.g., from the range of functions listed in Table \ref{table:topN} along with maxout. 
+
+Another major advantage of the \pentan{} function is that it may also take the role of a gate (because of its finite range) and thus be employed in more sophisticated neural network units such as LSTMs, where the rectifiers fail completely. In this context, we noticed that replacing \sigmoid{} and \mytanh{} in an LSTM cell with \pentan{} leads to a 2pp increase on a challenging NLP sequence tagging task. Exploring whether this holds across more NLP tasks should be scope for future work. Additionally, our research suggests it is worthwhile to further explore \pentan{}, an arguably marginally known activation function. For instance, other scaling factors than $0.25$ (default value from \citet{Xu:2016}) should be explored. Similarly as for \prelu{}, the scaling factor can also be made part of the optimization problem. 
+
+Finally, we found that except for \swish{} none of the newly discovered activation functions found in \citet{Ramach:2018} made it in our top categories, suggesting that automatic search of activation functions should be made across multiple tasks in the future. 

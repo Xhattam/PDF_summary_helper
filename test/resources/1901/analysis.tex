@@ -1,0 +1,37 @@
+%SeqTag has much deeper networks than SentClass (and DocClass). But this has probably only effect when the task has long-range dependencies. [For doc class and sent class choice of activation function didn't matter much]
+\paragraph{Winner statistics} 
+%As seen in \S\ref{sec:experiments}, 
+Each of the three meta-tasks sentence classification, document classification, and sequence tagging was won, on average, by a member from the rectifier family, namely, \relu{} (2) and \elu{}, for \best{}. Also, in each case, \cube{} and \cosid{} were among the worst performing activation functions. The majority of newly proposed functions from \citet{Ramach:2018} ranked somewhere in the mid-field, with \swish{} and \minsin{} performing best in the \best{} category.
+For the \avg{} category, we particulary had the maxout functions as well as \pentan{} and \mysin{} regularly as top performers. 
+%That the 
+%The rectifier family performed much worse here is also evidenced by the fact that the winners of \best{} sometimes perform very badly on other task types; 
+%for example, \elu{}, the winner for document classification, performed second-to-worst in sentence classification and in the mid-field for sequence tagging. 
+%In contrast, \pentan{} was also always in the top group even for \best{}. 
+
+To get further insights, we computed a winner statistic across all 17 mini-experiments, counting how often each activation function was among the top 3. Table \ref{table:topN} shows the results, excluding \prelu{} and the maxout functions because they were not considered in all mini-experiments. 
+
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}{ll}
+  \toprule
+     %         & Avg & Best \\ \midrule
+    \best{} & \pentan{} (6), \swish{} (6), \\
+    & \elu{} (4), \relu{} (4), \lrelua{} (4)\\   
+    \avg{} & \pentan{} (16), \mytanh{} (13)\\
+    & \mysin{} (10) \\
+  \bottomrule
+  \end{tabular}
+  \caption{Top-3 winner statistics. In brackets: number of times within top-3, keeping only functions with four or more top-3 rankings.}
+  \label{table:topN}
+\end{table}
+
+We see that \pentan{} and \swish{} win here for \best, followed by further rectifier functions. The \avg{} category is clearly won by saturating activation functions with finite range. If this comparison were restricted to sentence and document classification, where we also included the maxout functions, then \pentan{} would have been outperformed by maxout for \avg{}.
+
+This appears to yield the conclusion that functions with limited range behave more stably across hyperparameter settings while non-saturating functions tend to yield better top-performances. The noteworthy exception to this rule is \pentan{} which excels in both categories (the more expensive maxout functions would be further exceptions). If the slope around the origin of \pentan{} is responsible for its good performance, then this could also explain why \cube{} is so bad, since it is very flat close to the origin.  
+
+\paragraph{Influence of hyperparameters} To get some intuition about how hyperparameters affect our different activation functions, we regressed the score of the functions on the test set on all the employed hyperparameters. For example, we estimated:
+\begin{align}\label{eq:regression}
+  y = \alpha_l\cdot\log(n_l)+\alpha_d\cdot d+\cdots
+\end{align}
+where $y$ is the score on the test set, $n_l$ is the number of layers in the network, $d$ is the dropout value, etc. The coefficients $\alpha_k$ for each regressor $k$ is what we want to estimate (in particular, their size and their sign). We logarithmized certain variables whose scale was substantially larger than those of others (e.g., number of units, number of filters). For discrete regressors such as the optimizer we used binary dummy variables. We estimated Eq.~\eqref{eq:regression} independently for each activation function and for each mini-experiment. Overall, there was a very diverse pattern of outcomes, preventing us from making too strong conclusions. Still, we observed that while all models performed on average better with fewer hidden layers, particularly \swish{} was robust to more hidden layers (small negative coefficient $\alpha_l$), but also, to a lesser degree, \pentan{}. In the sentence classification tasks, \mysin{} and the maxout functions were particulary robust to an increase of hidden layers. Since \pentan{} is a saturating function and \mysin{} even an oscillating one, we therefore conclude that preserving the gradient (derivative close to one) is not a necessary prerequisite to successful learning in deeper neural networks. 
+

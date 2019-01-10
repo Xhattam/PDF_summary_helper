@@ -91,29 +91,47 @@ def get_references(content):
     return [(e.start(), e.group()) for e in tmp]
 
 
-def parser_main(dl_path):
+def parser_main(dl_path, ret=False):
     """ Finds tex source file. Parses its content. Overwrites source with blueprint.
 
     :param dl_path: PDF URL
+    param ret: if true, returns extracted content (for tests)
     """
     files_list = [e for e in os.listdir(dl_path) if e.endswith(".tex")]
     latex_content, tex_src_name = None, None
+    multiple_inputs = {}
 
     for name in files_list:
         content = open(os.path.join(dl_path, name), 'r').read()
         if "\\begin{document}" in content:
             latex_content = content
             tex_src_name = name
+        else:
+            name_no_ext = name.rsplit(".", 1)[0]
+            multiple_inputs[name_no_ext] = content
 
+    latex_content = concatenate_multiple_sources_into_one(multiple_inputs, latex_content)
     if latex_content:
         global TEX_FILE_PATH
         TEX_FILE_PATH = os.path.join(dl_path, tex_src_name)
         extracted_content = get_all(latex_content)
+        if ret:
+            return extracted_content
         with open(TEX_FILE_PATH, 'w') as parsed_latex_output:
             parsed_latex_output.write(extracted_content)
     else:
         sys.exit("Cannot find .tex file in the specified folder: {}".format(dl_path))
 
+
+def concatenate_multiple_sources_into_one(multiple_inputs, main_tex):
+
+    def replace_input_ref_by_content(m):
+        return multiple_inputs[m.groups()[0]]
+
+    print("MULTIPLE CONTENTS")
+    for e in multiple_inputs:
+        print(e)
+    return re.sub(r'\\input{(.*?)}', replace_input_ref_by_content, main_tex)
 
 if __name__ == "__main__":
     import argparse

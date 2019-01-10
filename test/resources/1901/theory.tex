@@ -1,0 +1,64 @@
+\paragraph{Activation functions} We consider 21 activation functions, 6 of which are ``novel'' and proposed in \citet{Ramach:2018}. The functional form of these 6 is given in Table \ref{table:functions}, together with the \sigmoid{} function. 
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}{ll}
+  \toprule
+    \sigmoid & $f(x)=\sigma(x)=1/(1+\exp(-x))$\\
+    %\mytanh & \\
+    \swish & $f(x)=x\cdot \sigma(x)$\\
+    \maxsig & $f(x)=\max\{x,\sigma(x)\}$\\
+    \cosid & $f(x)=\cos(x)-x$\\
+    \minsin & $f(x)=\min\{x,\sin(x)\}$\\
+    \arctid & $f(x)=\arctan(x)^2-x$\\
+    \maxtanh & $f(x)=\max\{x,\tanh(x)\}$\\
+    \midrule
+    \lrelua & $f(x)=\max\{x,0.01x\}$ \\
+    \lrelub & $f(x)=\max\{x,0.3x\}$ \\
+    {\small \pentan} & $f(x)=\begin{cases}\tanh(x) & x>0,\\ 0.25\tanh(x) & x\le 0\end{cases}$\\
+    \bottomrule
+  \end{tabular}
+  \caption{Top: \sigmoid{} activation function as well as 6 top performing activation functions from \citet{Ramach:2018}. Bottom: the LReLU functions with different parametrizations as well as \pentan{}.}
+  \label{table:functions}
+\end{table}
+
+The remaining 14 are: \mytanh, \mysin, \relu, \lrelua, \lrelub, \maxouta, \maxoutb, \maxoutc, \prelu, \linear, \elu{}, \cube, \pentan, \selu{}. We briefly describe 
+%a few of these in greater detail: 
+them: 
+\lrelua{} and \lrelub{} are the so-called leaky relu (LReLU) functions \cite{Maas:2013}; the idea behind them is to avoid zero activations/derivatives in the negative region of \relu{}. Their functional form is given in Table \ref{table:functions}. \prelu{} \cite{He:2015} generalizes the LReLU functions by allowing the slope in the negative region to be a %n arbitrary 
+learnable parameter. The maxout functions \cite{Goodfellow:2013} are different in that they introduce additional parameters and do not operate on a single scalar input. For example, \maxouta{} is the operation that takes the maximum of two inputs: $\max\{\mathbf{xW}+\mathbf{b},\mathbf{xV}+\mathbf{c}\}$, so the number of learnable parameters is doubled. \maxoutb{} is the analogous function that takes the maximum of three inputs.
+%: $\max\{\mathbf{xW}+\mathbf{b},\mathbf{xV}+\mathbf{c},\mathbf{xU}+\mathbf{d}\}$, etc. 
+As shown in \citet{Goodfellow:2013}, maxout can approximate any convex function. \mysin{} is the standard sine function, proposed in neural network learning, e.g., in \citet{Parascandolo:2016}, where it was shown to enable faster learning on certain tasks than more established functions. \pentan{} \cite{Xu:2016} has been defined in analogy to the LReLU functions, which can be thought of as ``penalizing'' the identity function in the negative region. 
+The reported good performance of \pentan{} on CIFAR-100 \cite{Krizhevsky:2009}
+%, an image classification dataset with 100 classes, 
+lets the authors speculate that the slope %and offset 
+of activation functions near the origin may be crucial for learning. 
+\linear{} is the identity function, $f(x)=x$. \cube{} is the function $f(x)=x^3$, proposed in \citet{Chen:2014} for an MLP used in dependency parsing. \elu{} \cite{Clevert:2015} has been proposed as (yet another) variant of \relu{} that assumes negative values, making the mean activations more zero-centered. \selu{} is a scaled variant of \elu{} used in \citet{Klambauer:2017} in the context of so-called self-normalizing neural nets.
+
+\paragraph{Properties of activation functions} 
+\begin{table*}[!htb]
+\centering
+\footnotesize
+\begin{tabular}{llll}
+  \toprule
+  Property & Description & Problems & Examples \\ \midrule
+  derivative & $f'$ & $>1$ exploding gradient (e) &  \sigmoid{} (v), \mytanh{} (v), \cube{} (e)\\
+  & & $<1$ vanishing (v) & \\
+  zero-centered & range centered around zero? &   if not, slower learning & \mytanh{} ($+$), \relu{} ($-$) \\ 
+  saturating & finite limits & vanishing gradient in the limit & \mytanh{}, \pentan{}, \sigmoid{}\\
+  monotonicity & $x>y\implies f(x)\ge f(y)$ & unclear & exceptions: \mysin{}, \swish{}, \minsin{} 
+  \\ \bottomrule
+ \end{tabular}
+ \caption{Frequently cited properties of activation functions}.
+ \label{table:properties}
+\end{table*}
+
+Many properties of activation functions have been speculated to be crucial for successful learning. 
+Some of these are listed in Table \ref{table:properties}, together with brief descriptions and illustrations. 
+%%%First, most activation functions are monotonic, probably as a historical 
+%One important factor appears to be the \textbf{derivative} of the activation functions, because small derivatives may lead to vanishing gradients and large derivatives to exploding gradients. Since the relu function \cite{Glorot:2011} has a derivative of 1 in the positive region, which is  putatively the optimal value, it has been claimed to be much more suitable than its predecessors such as \mytanh{} and particularly \sigmoid{}. However, \relu{} has a derivative of zero in the negative region and additionally is not \textbf{zero-centered}, %which makes functions such as leaky relu appear more suitable. 
+%which is the reason why functions such as LReLU and \elu{} have been proposed.  
+%Another frequently cited property is whether activation functions are \textbf{saturating} or not, that is, how they behave in the limits. A non-saturating function like \relu{} tends towards infinity as the pre-activation goes towards $+\infty$, while functions like \sigmoid{} and \mytanh{} converge toward a finite limit. This means that the derivatives of saturating functions may become very small, implying again a vanishing gradient problem. 
+%Most activation functions proposed are also \textbf{monotonic}, that is, larger $x$ implies larger activation. This is probably a historical relic: originally, neural networks were described by metaphors adapted from neuro-science, where a larger pre-activation of a unit was associated with a larger probability of that unit ``firing''. By contrast, many of the activation functions found by automatic search in \citet{Ramach:2018} are non-monotonic, including \swish{}. In particular, automatic search yielded many periodic functions, such as sine and cosine, usually in connection with the raw pre-activation $x$. 
+%\citet{Ramach:2018} also find that ``simpler'' activation functions tend to outperform more complicated ones, and functions using division perform badly, because of numerical problems when the denominator approaches zero. 
+
+Graphs of all activation functions can be found in the appendix. 
