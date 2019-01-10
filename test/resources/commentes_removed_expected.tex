@@ -15,7 +15,6 @@
 \usepackage{color}
 
 \usepackage{verbatim}
-
 \newcommand\BibTeX{B{\sc ib}\TeX}
 
 \title{CAN: Constrained Attention Networks for Multi-Aspect Sentiment Analysis}
@@ -53,7 +52,6 @@ In summary, the main contributions of our work are as follows:
 \begin{itemize}
 \vspace{-0.2cm}
 \item We propose CAN for multi-aspect sentiment analysis. Specifically, we introduce {\bf orthogonal} and {\bf sparse} regularizations to constrain the attention weight allocation, helping learn better aspect-specific sentence representations. To the best of our knowledge, this is the first work for multi-aspect sentiment analysis.
-
 \vspace{-0.2cm}
 \item We extend CAN to multi-task settings by introducing ACD as an auxiliary task, and applying CAN on  both ALSC and ACD tasks. 
 
@@ -62,7 +60,6 @@ In summary, the main contributions of our work are as follows:
 \end{itemize}
 
 \section{Related Work}
-
 {\bf Aspect level sentiment classification} is a fine-grained sentiment analysis task. Earlier methods are usually based on explicit features \cite{liu2010improving,Vo2015Target}. \cite{liu2010improving} uses different linguistic features for sentiment classification. \cite{Vo2015Target} studies aspect-based Twitter sentiment classification by applying automatic features, which are obtained from unsupervised learning methods. With the rapid development of deep learning technologies, many end-to-end neural networks are implemented to solve this fine-grained task. \cite{Wang2016Attention} proposes an attention-based LSTM network for aspect-level sentiment
 classification. \cite{Tay2017Learning} introduces a word aspect fusion attention layer to learn attentive representations. \cite{Ma2017Interactive} proposes the interactive attention
 networks to generate the representations for targets and contexts separately. \cite{tay2017dyadic} proposes dyadic memory networks for aspect based sentiment analysis. \cite{cheng2017aspect,ruder2016hierarchical} both propose hierarchical neural network models for aspect level sentiment classification. \cite{ma2018targeted} proposes a two-step attention model for targeted aspect-based sentiment analysis. \cite{wang2018learning} proposes a segmentation
@@ -70,7 +67,6 @@ attention based LSTM model for aspect level sentiment classification. However, a
 
 {\bf Multi-task learning} \cite{Caruana1997Multitask} solves multiple learning tasks at the same time, achieving improved performance by exploiting commonalities and differences across tasks. Multi-task learning has been used successfully in many  machine learning applications. \cite{Huang2018Multitask} learns both main task and auxiliary task jointly with shared representations, achieving improved performance in question answering. \cite{Toshniwal2017Multitask} uses low-level auxiliary tasks
 for encoder-decoder based speech recognition, which suggests that the addition of auxiliary tasks can help in either optimization or generalization. \cite{yu2016learning} uses two auxiliary tasks to help induce a sentence embedding that works well across domains for sentiment classification. In this paper, we adopt the multi-task learning approach by using ACD as the auxiliary task to help the ALSC task. 
-
 \begin{figure*}
 \setlength{\abovecaptionskip}{0.2cm}   %调整图片标题与图距离
 \setlength{\belowcaptionskip}{-0.3cm}   %调整图片标题与下文距离

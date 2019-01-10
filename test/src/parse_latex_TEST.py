@@ -74,3 +74,9 @@ class TestParser(unittest.TestCase):
         self.maxDiff = None
         extracted_content = pl.get_all(ORIG2)
         self.assertEqual(extracted_content, EXP2)
+
+    def test_comments_removal(self):
+        self.maxDiff = None
+        extracted = pl.remove_comments(COMM)
+
+        self.assertEqual(extracted, NO_COMM)

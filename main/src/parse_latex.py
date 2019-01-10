@@ -42,18 +42,21 @@ def get_figure(text):
     tmp = re.finditer(r'((?<!\\begin{comment})\s\\begin{(?P<sec>(?:' +
                        '{}'.format(patt) +
                        r')\*{0,1})}(?:.*?)\\end{(?P=sec)})', text, re.S)
-    #tmp = re.finditer(r'\\begin{(?P<sec>(?:figure|equation|itemize|table|enumerate|problem|align|layer1)\*{0,1})}(?:.*?)\\end{(?P=sec)}', text, re.S)
-
 
     return [(e.start(), e.group().strip()) for e in tmp]
 
 
 def remove_comments(text):
+    """ Removes comments
+    :param text: latex file content
+    :return: content without comments
+    """
     clean = "\n".join([l for l in text.split("\n") if not l.startswith("%")])
     return re.sub(r'\n{3,}', '\n', clean)
 
 
 def get_appendix(text):
+    """ Extracts the appendix header (no content) """
     tmp = re.finditer(r'(^\\appendix$)', text, re.M)
     return [(e.start(), e.group()) for e in tmp]
 
@@ -73,19 +76,13 @@ def get_all(text):
     result += get_sections(text)
     result += get_references(text)
     result += get_appendix(text)
-    # for e in get_figure(text):
-    #     result.append(e)
-    # for e in get_sections(text):
-    #     result.append(e)
     result.sort()
 
-    # for e in get_references(text):
-    #     result.append(e)
     return "\n\n".join(e[1] for e in result).strip() + "\n\n\end{document}\n"
 
 
 def get_references(content):
-    """ Extracts bibliography. Assumption : it's in the last element of `sections`
+    """ Extracts bibliography.
 
     :param content: last section of the extracted latex file
     :return: iterator containing each line matching \bilbio.*{.*}

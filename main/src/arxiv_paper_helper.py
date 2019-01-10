@@ -5,13 +5,13 @@
 JAN 2019
 """
 
-from download_arxiv_data import arxiv_downloader_main, get_dest_path, get_pdf_path
+from download_arxiv_data import arxiv_downloader_main, get_dest_path, get_pdf_path, get_latex_src_path
 from parse_latex import parser_main, get_tex_path
 import subprocess
 import sys
 
 
-def paper_helper_main(pdf_url, dest):
+def paper_helper_main(pdf_url):
     """ Calls download and parsing functions.
 
     :param pdf_url: URL if PDF to download sources from, when possible
@@ -20,7 +20,7 @@ def paper_helper_main(pdf_url, dest):
     """
     arxiv_downloader_main(pdf_url)
     dest_path = get_dest_path()
-    parser_main(dest_path)
+    parser_main(get_latex_src_path())
 
     try:
         subprocess.Popen(["evince", get_pdf_path()])
@@ -49,7 +49,6 @@ if __name__ == "__main__":
                                                  so that the user can start reading the paper and taking notes ready\
                                                  to be compiled to pdf from latex.")
     parser.add_argument("pdf_url", type=str, help="URL to PDF")
-    parser.add_argument("dest", type=str, help="Name of folder to save data to (will be created if it doesn't exist)")
 
     args = parser.parse_args()
     paper_helper_main(**vars(args))
