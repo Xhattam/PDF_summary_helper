@@ -5,7 +5,9 @@
 \usepackage{latexsym}
 \usepackage{pbox}
 \usepackage{url}
-\aclfinalcopy % Uncomment this line for the final submission
+\aclfinalcopy
+
+
 \newcommand\BibTeX{B{\sc ib}\TeX}
 \newcommand\confname{EMNLP 2018}
 \newcommand\conforg{SIGDAT}
@@ -13,35 +15,37 @@
 \usepackage{amsmath,amsfonts,amsthm}
 \usepackage{color}
 \usepackage{graphicx}
-\usepackage{pifont}% http://ctan.org/pkg/pifont
-\newcommand{\cmark}{\ding{51}}%
-\newcommand{\xmark}{\ding{55}}%
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
 \usepackage{footnote}
 \makesavenoteenv{tabular}
 \makesavenoteenv{table}
 
-\newtheoremstyle{mydef}%
+\newtheoremstyle{mydef}
 {}{}{\normalfont}{}{\itshape}{.\,}{ }{}
 \theoremstyle{mydef}
 \newtheorem{definition}{Definition}
 
-\newtheoremstyle{myprob}%
+\newtheoremstyle{myprob}
 {}{}{\normalfont}{}{\scshape}{.\,}{ }{}
 \theoremstyle{myprob}
 \newtheorem{problem}{Problem}
 
 \newtheoremstyle{mylayer}{}{}{\normalfont}{}{\itshape}{.\,}{ }{}\theoremstyle{mylayer}
 \newtheorem{layer1}{}
+
+
 \begin{document}
 
 \title{Multi-style Generative Reading Comprehension}
 
-\author{Kyosuke Nishida$^1$, 
-Itsumi Saito$^1$, 
-Kosuke Nishida$^1$, 
-\\{\bf Kazutoshi Shinoda}$^2$\thanks{\ \ Work done during an internship at NTT.}, 
+\author{Kyosuke Nishida$^1$,
+Itsumi Saito$^1$,
+Kosuke Nishida$^1$,
+\\{\bf Kazutoshi Shinoda}$^2$\thanks{\ \ Work done during an internship at NTT.},
 {\bf Atsushi Otsuka}$^1$,
-{\bf Hisako Asano}$^1$, 
+{\bf Hisako Asano}$^1$,
 {\bf Junji Tomita}$^1$\\
   $^1$NTT Media Intelligence Laboratory, NTT Corporation \hspace{1.5em}  $^2$The University of Tokyo\\
   {\tt kyosuke.nishida@acm.org}
@@ -51,9 +55,9 @@ Kosuke Nishida$^1$,
 
 \maketitle
 \begin{abstract}
-This study focuses on the task of multi-passage reading comprehension (RC) where an answer is provided in natural language. Current mainstream approaches treat RC by extracting the answer span from the provided passages and cannot generate an abstractive summary from the given question and passages. Moreover, they cannot utilize and control different styles of answers, such as concise phrases and well-formed sentences, within a model. 
-In this study, we propose a style-controllable Multi-source Abstractive Summarization model for QUEstion answering, called Masque. The model is an end-to-end deep neural network that can generate answers conditioned on a given style. 
-Experiments with MS MARCO 2.1 show that our model achieved state-of-the-art performance %in terms of Rouge-L 
+This study focuses on the task of multi-passage reading comprehension (RC) where an answer is provided in natural language. Current mainstream approaches treat RC by extracting the answer span from the provided passages and cannot generate an abstractive summary from the given question and passages. Moreover, they cannot utilize and control different styles of answers, such as concise phrases and well-formed sentences, within a model.
+In this study, we propose a style-controllable Multi-source Abstractive Summarization model for QUEstion answering, called Masque. The model is an end-to-end deep neural network that can generate answers conditioned on a given style.
+Experiments with MS MARCO 2.1 show that our model achieved state-of-the-art performance
 on two tasks with different answer styles.
 \end{abstract}
 
@@ -71,7 +75,7 @@ on two tasks with different answer styles.
 
 \begin{problem}
 \label{prob:prob}
-Given a question with $J$ words $x^q = \{x^q_1, \ldots, x^q_J\}$, a set of $K$ passages, where each $k$-th passage is composed of $L$ words $x^{p_k} = \{x^{p_k}_1, \ldots, x^{p_k}_{L}\}$, and an answer style $s$, an RC system %distinguishes whether the question is answered on the basis of the provided passages and 
+Given a question with $J$ words $x^q = \{x^q_1, \ldots, x^q_J\}$, a set of $K$ passages, where each $k$-th passage is composed of $L$ words $x^{p_k} = \{x^{p_k}_1, \ldots, x^{p_k}_{L}\}$, and an answer style $s$, an RC system
 outputs an answer $y = \{y_1, \ldots, y_T \}$ conditioned on the style.
 \end{problem}
 
@@ -108,11 +112,11 @@ U^{p_k}_{lj} = {w^a}^\top [ E^{p_k}_l; E^q_j; E^{p_k}_l \odot E^q_j ]
 
 \begin{align}
 e^q_j &= {w^q}^\top \tanh(W^{qm} M_j^q + W^{qs} s_t +b^q), \\
-\alpha^q_t &= \mathrm{softmax}(e^q), \\ 
+\alpha^q_t &= \mathrm{softmax}(e^q), \\
 c^q_t &= \textstyle \sum_j \alpha^q_{tj} M_j^q, \\
 e^{p_k}_l &= {w^p}^\top \tanh(W^{pm} M_l^{p_k} + W^{ps} s_t +b^p), \\
 \alpha^p_t &= \mathrm{softmax}([e^{p_1}; \ldots; e^{p_K}]), \\
-c^p_t &=  \textstyle \sum_{l} \alpha^p_{tl} M^{p_\mathrm{all}}_{l}, 
+c^p_t &=  \textstyle \sum_{l} \alpha^p_{tl} M^{p_\mathrm{all}}_{l},
 \end{align}
 
 \begin{align}
@@ -128,26 +132,26 @@ P^p(y_t) &= \textstyle \sum_{l: x^{p_{k(l)}}_{l} = y_t} \alpha^p_{tl},
 
 \begin{table}[t!]
 \centering
-{\small \tabcolsep=1.5pt %3.5pt
+{\small \tabcolsep=1.5pt
 \begin{tabular}{p{15em}|c|cc}
 \hline
 Model & train & Rouge-L & Bleu-1 \\ \hline
 Masque (NLG style; single)
-& ALL&  {\bf 69.77} & {\bf 65.56} \\ %\hline
+& ALL&  {\bf 69.77} & {\bf 65.56} \\
 \begin{tabular}{p{15em}}
 w/o multi-style learning (\S\ref{sec:style})
 \end{tabular} & WFA &68.20 & 63.95 \\
 \begin{tabular}{p{15em}}
 $\hookrightarrow$
-w/o Transformer (\S\ref{sec:tfenc}, \S\ref{sec:style})%\footnotemark[3] %WFA
-\end{tabular} & WFA & 67.13 & 62.96 \\ 
+w/o Transformer (\S\ref{sec:tfenc}, \S\ref{sec:style})
+\end{tabular} & WFA & 67.13 & 62.96 \\
 \begin{tabular}{p{15em}}
-w/o passage ranker (\S\ref{sec:ranker})%\footnotemark[3] % WFA
+w/o passage ranker (\S\ref{sec:ranker})
 \end{tabular} & WFA & 68.05 & 63.82 \\
 \begin{tabular}{p{15em}}
 w/o possibility classifier (\S\ref{sec:classifier})
 \end{tabular} & ANS & 69.64 & 65.41 \\ \hline
-Masque w/ gold passage ranker & ALL & 78.70 & 78.14 \\ 
+Masque w/ gold passage ranker & ALL & 78.70 & 78.14 \\
 \hline
 \end{tabular}
 }
@@ -169,7 +173,7 @@ Masque w/ gold passage ranker & ALL & 78.70 & 78.14 \\
 
 \begin{table*}[h!]
 \centering
-\caption{Our model could control answer styles appropriately for (a) natural language, (b) cloze-style, and (c) keywords questions. (d) The Q\&A was incorrect. (e) %Passage re-ranking worked poorly and 
+\caption{Our model could control answer styles appropriately for (a) natural language, (b) cloze-style, and (c) keywords questions. (d) The Q\&A was incorrect. (e)
 The answers were not consistent between the styles. (f) Copying from numerical words worked poorly. There were some \underline{grammatical errors}.  }
 \label{tb:examples}
 {\footnotesize
@@ -183,7 +187,7 @@ The answers were not consistent between the styles. (f) Copying from numerical w
 \textbf{Relevant Passage}: Shaking is a symptom in which a person has tremors (shakiness or small back and forth movements) in part or all of his body. Shaking can be due to cold body temperatures, rising fever (such as with infections), neurological problems, medicine effects, drug abuse, etc. ...Read more. \\
 \textbf{Reference Answer (Q\&A)}: Shaking can be due to cold body temperatures, rising fever (such as with infections), neurological problems, medicine effects, drug abuse, etc.  \\
 \textbf{Prediction (Q\&A)}: because of cold body temperatures , rising fever , neurological problems , medicine effects , drug abuse~.~\cmark\\
-\textbf{Reference Answers (NLG)}: Shaking can be due to cold body temperatures, rising fever, neurological problems, medicine effects and drug abuse. / 
+\textbf{Reference Answers (NLG)}: Shaking can be due to cold body temperatures, rising fever, neurological problems, medicine effects and drug abuse. /
 Body would feel like it is shaking due to cold body temperatures, rising fever, neurological problems, medicine effects, drug abuse. \\\
 \textbf{Prediction (NLG)}: your body would feel like it is shaking because of cold body temperatures , rising fever , neurological problems , medicine effects , drug abuse . \cmark
 }
@@ -211,7 +215,7 @@ Body would feel like it is shaking due to cold body temperatures, rising fever, 
 \textbf{Prediction (NLG)}: the average height of \underline{an} national basketball association player is 6 feet 7 inches . \cmark
 }
 \vspace{1pt}
-\\ \hline 
+\\ \hline
 \vspace{0.5pt}
 \pbox{50em}{
 \textbf{(d) Question}: population of henryetta ok\\
@@ -222,7 +226,7 @@ Body would feel like it is shaking due to cold body temperatures, rising fever, 
 \textbf{Prediction (NLG)}:  the population of henryetta , oklahoma is 5,927 . \cmark
 }
 \vspace{1pt}
-\\ \hline 
+\\ \hline
 \vspace{0.5pt}
 \pbox{50em}{
 \textbf{(e) Question}: does gameplay programmer need math skill\\

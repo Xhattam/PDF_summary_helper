@@ -15,6 +15,8 @@
 \usepackage{color}
 
 \usepackage{verbatim}
+
+
 \newcommand\BibTeX{B{\sc ib}\TeX}
 
 \title{CAN: Constrained Attention Networks for Multi-Aspect Sentiment Analysis}
@@ -30,18 +32,18 @@ mthu@mail.nankai.edu.cn, \{zhaosw, lizhang, caikeke, suzhong\}@cn.ibm.com, \\ ch
 Aspect level sentiment classification is a fine-grained sentiment analysis task, compared to the sentence level classification. A sentence usually contains one or more aspects. To detect the sentiment towards a particular aspect in a sentence, previous studies have developed various methods for generating aspect-specific sentence representations. However, these studies handle each aspect of a sentence separately. In this paper, we argue that multiple aspects of a sentence are usually orthogonal based on the observation that different aspects concentrate on different parts of the sentence. To force the orthogonality among aspects, we propose constrained attention networks (CAN) for multi-aspect sentiment analysis, which handles multiple aspects of a sentence simultaneously. Experimental results on two public datasets demonstrate the effectiveness of our approach. We also extend our approach to multi-task settings, outperforming the state-of-the-arts significantly.
 \end{abstract}
 \section{Introduction}
-Sentiment analysis \cite{Nasukawa2003Sentiment,liu2012sentiment}, an important task in natural language understanding, receives much attention in recent years. Aspect level sentiment classification is a fine-grained sentiment analysis task, which aims at detecting the sentiment towards a particular aspect in a sentence. A multi-aspect sentence (\emph{i.e.}, the sentence contains more than one aspect) can be categorized as {\bf overlapping} or {\bf non-overlapping}. A sentence is annotated as non-overlapping only if any two of its aspects have no overlap. One key observation is that around $85\%$ of the multi-aspect sentences are non-overlapping in the two public datasets. Figure \ref{sentence} shows a simple example. The non-overlapping sentence contains two aspects. The aspect \emph{food} is in the left part of the sentence while \emph{service} in the right part. Their distributions on words are {\bf orthogonal} to each other. Another observation is that only a few words relate to the opinion expression in each aspect. As shown in Figure \ref{sentence}, only the word \emph{``great''} is relevant to the aspect \emph{food} and \emph{``dreadful"} to \emph{service}. The distribution of the opinion expression of each aspect is {\bf sparse}. 
+Sentiment analysis \cite{Nasukawa2003Sentiment,liu2012sentiment}, an important task in natural language understanding, receives much attention in recent years. Aspect level sentiment classification is a fine-grained sentiment analysis task, which aims at detecting the sentiment towards a particular aspect in a sentence. A multi-aspect sentence (\emph{i.e.}, the sentence contains more than one aspect) can be categorized as {\bf overlapping} or {\bf non-overlapping}. A sentence is annotated as non-overlapping only if any two of its aspects have no overlap. One key observation is that around $85\%$ of the multi-aspect sentences are non-overlapping in the two public datasets. Figure \ref{sentence} shows a simple example. The non-overlapping sentence contains two aspects. The aspect \emph{food} is in the left part of the sentence while \emph{service} in the right part. Their distributions on words are {\bf orthogonal} to each other. Another observation is that only a few words relate to the opinion expression in each aspect. As shown in Figure \ref{sentence}, only the word \emph{``great''} is relevant to the aspect \emph{food} and \emph{``dreadful"} to \emph{service}. The distribution of the opinion expression of each aspect is {\bf sparse}.
 
-To detect the sentiment towards a particular aspect, previous studies \cite{Wang2016Attention,Ma2017Interactive,cheng2017aspect,ma2018targeted,huang2018aspect,wang2018learning} have developed various attention-based methods for generating aspect-specific sentence representations. To name a few, \cite{Wang2016Attention} proposes attention-based LSTMs for aspect level sentiment classification. The attention mechanism can concentrate on different parts of a sentence when different aspects are taken as input. %By learning an aspect-specific representation of a sentence, they are more competitive for aspect level classification. 
-\cite{wang2018learning} proposes a segmentation attention based LSTM model which can effectively capture the structural dependencies between the target and the sentiment expressions with a linear-chain conditional random field (CRF) layer. However, all these works are single-aspect sentiment analysis, which deals with aspects in a sentence one at a time, ignoring the orthogonality among multiple aspects. 
+To detect the sentiment towards a particular aspect, previous studies \cite{Wang2016Attention,Ma2017Interactive,cheng2017aspect,ma2018targeted,huang2018aspect,wang2018learning} have developed various attention-based methods for generating aspect-specific sentence representations. To name a few, \cite{Wang2016Attention} proposes attention-based LSTMs for aspect level sentiment classification. The attention mechanism can concentrate on different parts of a sentence when different aspects are taken as input.
+\cite{wang2018learning} proposes a segmentation attention based LSTM model which can effectively capture the structural dependencies between the target and the sentiment expressions with a linear-chain conditional random field (CRF) layer. However, all these works are single-aspect sentiment analysis, which deals with aspects in a sentence one at a time, ignoring the orthogonality among multiple aspects.
 
 \begin{figure}
-\setlength{\abovecaptionskip}{0.2cm}    %调整图片标题与图距离
-\setlength{\belowcaptionskip}{-0.2cm}   %调整图片标题与下文距离
+\setlength{\abovecaptionskip}{0.2cm}
+\setlength{\belowcaptionskip}{-0.2cm}
 \centering
 \includegraphics[width=0.45\textwidth]{example.pdf}
-\caption{Example of a non-overlapping sentence.} 
-  \label{sentence} 
+\caption{Example of a non-overlapping sentence.}
+  \label{sentence}
 \end{figure}
 
 Therefore, we propose a model for multi-aspect sentiment analysis, which handles multiple aspects of a sentence simultaneously. Specifically, we introduce orthogonal regularization for attention weights among multiple non-overlapping aspects. The orthogonal regularization tends to make the attention weights of multiple aspects concentrate on different parts of the sentence with less overlap. We also introduce the sparse regularization, which tends to make the attention weights of each aspect concentrate only on a few words. We call our networks with such regularizations {\bf constrained attention networks} (CAN). The implementation of adding regularization terms to attention weights of multiple aspects is similar to adding the penalization term in self-attention in \cite{lin2017structured}. The details will be introduced in the model section.
@@ -52,24 +54,28 @@ In summary, the main contributions of our work are as follows:
 \begin{itemize}
 \vspace{-0.2cm}
 \item We propose CAN for multi-aspect sentiment analysis. Specifically, we introduce {\bf orthogonal} and {\bf sparse} regularizations to constrain the attention weight allocation, helping learn better aspect-specific sentence representations. To the best of our knowledge, this is the first work for multi-aspect sentiment analysis.
-\vspace{-0.2cm}
-\item We extend CAN to multi-task settings by introducing ACD as an auxiliary task, and applying CAN on  both ALSC and ACD tasks. 
+
 
 \vspace{-0.2cm}
-\item Extensive experiments are conducted on public datasets. Results demonstrate the effectiveness of our approach for aspect level sentiment classification.  
+\item We extend CAN to multi-task settings by introducing ACD as an auxiliary task, and applying CAN on  both ALSC and ACD tasks.
+
+\vspace{-0.2cm}
+\item Extensive experiments are conducted on public datasets. Results demonstrate the effectiveness of our approach for aspect level sentiment classification.
 \end{itemize}
 
 \section{Related Work}
 {\bf Aspect level sentiment classification} is a fine-grained sentiment analysis task. Earlier methods are usually based on explicit features \cite{liu2010improving,Vo2015Target}. \cite{liu2010improving} uses different linguistic features for sentiment classification. \cite{Vo2015Target} studies aspect-based Twitter sentiment classification by applying automatic features, which are obtained from unsupervised learning methods. With the rapid development of deep learning technologies, many end-to-end neural networks are implemented to solve this fine-grained task. \cite{Wang2016Attention} proposes an attention-based LSTM network for aspect-level sentiment
 classification. \cite{Tay2017Learning} introduces a word aspect fusion attention layer to learn attentive representations. \cite{Ma2017Interactive} proposes the interactive attention
 networks to generate the representations for targets and contexts separately. \cite{tay2017dyadic} proposes dyadic memory networks for aspect based sentiment analysis. \cite{cheng2017aspect,ruder2016hierarchical} both propose hierarchical neural network models for aspect level sentiment classification. \cite{ma2018targeted} proposes a two-step attention model for targeted aspect-based sentiment analysis. \cite{wang2018learning} proposes a segmentation
-attention based LSTM model for aspect level sentiment classification. However, all these works can be categorized as single-aspect sentiment analysis, which deals with aspects in a sentence separately, ignoring the orthogonality among multiple aspects. 
+attention based LSTM model for aspect level sentiment classification. However, all these works can be categorized as single-aspect sentiment analysis, which deals with aspects in a sentence separately, ignoring the orthogonality among multiple aspects.
 
 {\bf Multi-task learning} \cite{Caruana1997Multitask} solves multiple learning tasks at the same time, achieving improved performance by exploiting commonalities and differences across tasks. Multi-task learning has been used successfully in many  machine learning applications. \cite{Huang2018Multitask} learns both main task and auxiliary task jointly with shared representations, achieving improved performance in question answering. \cite{Toshniwal2017Multitask} uses low-level auxiliary tasks
-for encoder-decoder based speech recognition, which suggests that the addition of auxiliary tasks can help in either optimization or generalization. \cite{yu2016learning} uses two auxiliary tasks to help induce a sentence embedding that works well across domains for sentiment classification. In this paper, we adopt the multi-task learning approach by using ACD as the auxiliary task to help the ALSC task. 
+for encoder-decoder based speech recognition, which suggests that the addition of auxiliary tasks can help in either optimization or generalization. \cite{yu2016learning} uses two auxiliary tasks to help induce a sentence embedding that works well across domains for sentiment classification. In this paper, we adopt the multi-task learning approach by using ACD as the auxiliary task to help the ALSC task.
+
+
 \begin{figure*}
-\setlength{\abovecaptionskip}{0.2cm}   %调整图片标题与图距离
-\setlength{\belowcaptionskip}{-0.3cm}   %调整图片标题与下文距离
+\setlength{\abovecaptionskip}{0.2cm}
+\setlength{\belowcaptionskip}{-0.3cm}
 \centering
 	\includegraphics[width=1.0\textwidth]{Big_network_new.pdf}
     \caption{Network Architecture. The aspect categories are embedded as vectors. The model encodes the sentence using LSTM. Based on its hidden states, aspect-specific sentence representations for ALSC and ACD tasks are learned via constrained attention. Then aspect level sentiment prediction and aspect category detection are made. }

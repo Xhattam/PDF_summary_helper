@@ -1,21 +1,82 @@
+\pdfoutput=1
+\documentclass[11pt,a4paper]{article}
+\PassOptionsToPackage{linktocpage}{hyperref}
+\usepackage[hyperref]{emnlp2018}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage{todonotes}
+\usepackage{amsmath,amssymb}
+
+\usepackage{url}
+
+\usepackage{booktabs}
+
+
+\usepackage{enumitem}
+
+\newcommand{\relu}{\textsf{relu}}
+\newcommand{\lrelua}{\textsf{lrelu-0.01}}
+\newcommand{\lrelub}{\textsf{lrelu-0.30}}
+\newcommand{\swish}{\textsf{swish}}
+\newcommand{\pentan}{\textsf{penalized tanh}}
+\newcommand{\arctid}{\textsf{arctid}}
+\newcommand{\elu}{\textsf{elu}}
+\newcommand{\minsin}{\textsf{minsin}}
+\newcommand{\maxtanh}{\textsf{maxtanh}}
+\newcommand{\mytanh}{\textsf{tanh}}
+\newcommand{\mysin}{\textsf{sin}}
+\newcommand{\maxsig}{\textsf{maxsig}}
+\newcommand{\selu}{\textsf{selu}}
+\newcommand{\linear}{\textsf{linear}}
+\newcommand{\sigmoid}{\textsf{sigmoid}}
+\newcommand{\cosid}{\textsf{cosid}}
+\newcommand{\cube}{\textsf{cube}}
+\newcommand{\maxouta}{\textsf{maxout-2}}
+\newcommand{\maxoutb}{\textsf{maxout-3}}
+\newcommand{\maxoutc}{\textsf{maxout-4}}
+\newcommand{\prelu}{\textsf{prelu}}
+\newcommand{\best}{\texttt{best}}
+
+
+\newcommand{\avg}{\texttt{mean}}
+
+
+\aclfinalcopy
+\def\aclpaperid{256}
+
+
+\newcommand\BibTeX{B{\sc ib}\TeX}
+\newcommand\confname{EMNLP 2018}
+\newcommand\conforg{SIGDAT}
+
+\title{Is it Time to Swish? \\ Comparing Deep Learning Activation Functions Across NLP tasks}
+
+\author{Steffen Eger, Paul Youssef, Iryna Gurevych \\
+  Ubiquitous Knowledge Processing Lab (UKP-TUDA) \\
+  Department of Computer Science \\
+  Technische Universit\"at Darmstadt\\
+  {\tt www.ukp.tu-darmstadt.de}
+  }
+
+\date{}
+
 \begin{document}
 \maketitle
 \begin{abstract}
-Activation functions play a crucial role in neural networks because they are the non-linearities which have been attributed to the success story of deep learning. One of the currently most popular activation functions is ReLU, but several competitors have recently been proposed or `discovered', including LReLU functions and \swish. While most works compare newly proposed activation functions on few tasks (usually from image classification) and against few competitors (usually ReLU), we perform the first large-scale comparison of 21 activation functions across eight different NLP tasks. We find that a largely unknown activation function performs most stably across all tasks, the so-called \pentan{} function. We also show that it can successfully replace the \sigmoid{} and \mytanh{} gates in LSTM cells, leading to a 2 percentage point (pp) improvement over the standard choices on a challenging NLP task. 
+Activation functions play a crucial role in neural networks because they are the non-linearities which have been attributed to the success story of deep learning. One of the currently most popular activation functions is ReLU, but several competitors have recently been proposed or `discovered', including LReLU functions and \swish. While most works compare newly proposed activation functions on few tasks (usually from image classification) and against few competitors (usually ReLU), we perform the first large-scale comparison of 21 activation functions across eight different NLP tasks. We find that a largely unknown activation function performs most stably across all tasks, the so-called \pentan{} function. We also show that it can successfully replace the \sigmoid{} and \mytanh{} gates in LSTM cells, leading to a 2 percentage point (pp) improvement over the standard choices on a challenging NLP task.
 \end{abstract}
 
 \section{Introduction}
 
 \section{Theory}
 
-\paragraph{Activation functions} 
+\paragraph{Activation functions}
 
 \begin{table}[!htb]
   \centering
   \begin{tabular}{ll}
   \toprule
     \sigmoid & $f(x)=\sigma(x)=1/(1+\exp(-x))$\\
-    %\mytanh & \\
     \swish & $f(x)=x\cdot \sigma(x)$\\
     \maxsig & $f(x)=\max\{x,\sigma(x)\}$\\
     \cosid & $f(x)=\cos(x)-x$\\
@@ -32,7 +93,7 @@ Activation functions play a crucial role in neural networks because they are the
   \label{table:functions}
 \end{table}
 
-\paragraph{Properties of activation functions} 
+\paragraph{Properties of activation functions}
 
 \begin{table*}[!htb]
 \centering
@@ -42,18 +103,18 @@ Activation functions play a crucial role in neural networks because they are the
   Property & Description & Problems & Examples \\ \midrule
   derivative & $f'$ & $>1$ exploding gradient (e) &  \sigmoid{} (v), \mytanh{} (v), \cube{} (e)\\
   & & $<1$ vanishing (v) & \\
-  zero-centered & range centered around zero? &   if not, slower learning & \mytanh{} ($+$), \relu{} ($-$) \\ 
+  zero-centered & range centered around zero? &   if not, slower learning & \mytanh{} ($+$), \relu{} ($-$) \\
   saturating & finite limits & vanishing gradient in the limit & \mytanh{}, \pentan{}, \sigmoid{}\\
-  monotonicity & $x>y\implies f(x)\ge f(y)$ & unclear & exceptions: \mysin{}, \swish{}, \minsin{} 
+  monotonicity & $x>y\implies f(x)\ge f(y)$ & unclear & exceptions: \mysin{}, \swish{}, \minsin{}
   \\ \bottomrule
  \end{tabular}
  \caption{Frequently cited properties of activation functions}.
  \label{table:properties}
 \end{table*}
 
-\section{Experiments}\label{sec:experiments}
+\section{Experiments}
 
-\subsection{MLP \& Sentence Classification}\label{sec:1}
+\subsection{MLP \& Sentence Classification}
 
 \paragraph{Model}
 
@@ -62,20 +123,25 @@ Activation functions play a crucial role in neural networks because they are the
   \mathbf{y} &= \text{softmax}(\mathbf{x}_{N}\mathbf{W}_{N+1}+\mathbf{b}_{N+1})
 \end{align*}
 
+\paragraph{Data}
+
+\input{tables/tasks}
+
 \paragraph{Approach}
 
 \begin{itemize}[noitemsep,leftmargin=0.6cm]
-  \item (1): MR dataset with Sent2Vec-unigram embeddings as input and 1\% of the full data as training data; (2): the same mini-experiment with 50\% of the full data as training data. In both cases, the dev set comprises 10\% of the full data and the rest is for testing. 
+  \item (1): MR dataset with Sent2Vec-unigram embeddings as input and 1\% of the full data as training data; (2): the same mini-experiment with 50\% of the full data as training data. In both cases, the dev set comprises 10\% of the full data and the rest is for testing.
   \item (3,4): SUBJ with InferSent embeddings and likewise 1\% and 50\% of the full data as train data, respectively.
-  \item (5): The TREC dataset with original split in train and test; 50\% of the train split is used as dev data. 
-  \item (6): The AM dataset with original split in train, dev, and test \cite{Eger:2017}, and with InferSent input embeddings. (7): the same mini-experiment with Sent2Vec-unigram embeddings. 
+  \item (5): The TREC dataset with original split in train and test; 50\% of the train split is used as dev data.
+  \item (6): The AM dataset with original split in train, dev, and test \cite{Eger:2017}, and with InferSent input embeddings. (7): the same mini-experiment with Sent2Vec-unigram embeddings.
 \end{itemize}
+
+\input{tables/hyperparams_sent}
 
 \paragraph{Results}
 
 \begin{figure}[htb]
   \centering
-  %\scalebox{0.5}{\input{plots/sent3.tex}}
   \scalebox{0.5}{\input{plots/sent.tex}}
   \caption{Sentence Classification. Left y-axis: \best. Right y-axis: \avg{}. Score on y-axes is the average over all mini-experiments.}
   \label{fig:sent}
@@ -89,56 +155,115 @@ Activation functions play a crucial role in neural networks because they are the
   c_i = f(\mathbf{w}\cdot \mathbf{x}_{i:i+h-1}+b).
 \end{align*}
 
+\paragraph{Data}
+
 \paragraph{Approach}
 
 \begin{itemize}[noitemsep,leftmargin=0.6cm]
-\item (1,2) NG dataset with 5\% and 50\%, respectively of the full data as train data. In both cases, 10\% of the full data is used as dev data, and the rest as test data.  
-\item (3,4) Same as (1,2) for R8. 
-%R8 dataset with same specifications as for NG.
+\item (1,2) NG dataset with 5\% and 50\%, respectively of the full data as train data. In both cases, 10\% of the full data is used as dev data, and the rest as test data.
+\item (3,4) Same as (1,2) for R8.
 \end{itemize}
 
 \paragraph{Results}
 
 \begin{figure}[!htb]
 \centering
-%\scalebox{0.5}{\input{plots/doc2}}
 \scalebox{0.5}{\input{plots/doc}}
 \caption{Doc classification.}
 \label{fig:doc}
 \end{figure}
 
 \subsection{RNN \& Sequence Tagging}
+
 \paragraph{Model}
 
+\begin{align*}
+  \mathbf{h}_i &= f(\mathbf{h}_{i-1}\mathbf{W}+\mathbf{w}_i\cdot\mathbf{U}+\mathbf{b})\\
+  \mathbf{y}_i &= \text{softmax}(\mathbf{h}_i\mathbf{V}+\mathbf{c})
+\end{align*}
 
+\paragraph{Data}
 
+\paragraph{Approach}
 
+\begin{itemize}[noitemsep,leftmargin=0.6cm]
+  \item (1): TL-AM with Glove-100d word embeddings and 5\% of the original training data as train data; (2) the same with 30\% of the original training data as train data. In both cases, dev and test follow the original train splits \cite{Eger:2017}.
+  \item (3,4) Same as (1) and (2) but with 300d Levy word embeddings \cite{Levy:2014}.
+  \item (5,6): POS with Glove-100d word embeddings and 5\% and 30\%, respectively, of the train data of a pre-determined train/dev/test split (13k/13k/178k tokens). Dev and test are fixed in both cases.
+\end{itemize}
 
+\paragraph{Results}
 
-\section{Analysis \& Discussion}\label{sec:analysis}
-\input{analysis}
+\begin{figure}[!htb]
+\centering
+\scalebox{0.5}{
+\input{plots/seq}}
+\caption{Sequence tagging.}
+\label{fig:seq}
+\end{figure}
 
-%\section{Related Work}\label{sec:related}
+\paragraph{LSTM vs.\ RNN}
 
-%\section{Problems}
-%\input{problems}
+\begin{align*}
+  \mathbf{f}_t &= \sigma([\mathbf{h}_{t-1};\mathbf{x}_t]\cdot \mathbf{W}_f),\\
+  \mathbf{i}_t &= \sigma([\mathbf{h}_{t-1};\mathbf{x}_t]\cdot \mathbf{W}_i),\\
+  \mathbf{o}_t &= \sigma([\mathbf{h}_{t-1};\mathbf{x}_t]\cdot \mathbf{W}_o)\\
+  \mathbf{c}_t &= \mathbf{f}_t\odot \mathbf{c}_{t-1}+\mathbf{i}_t\odot\tau([\mathbf{h}_{t-1};\mathbf{x}_t]\cdot \mathbf{W}_c)\\
+  \mathbf{h}_t &= \mathbf{o}_t\odot \tau(\mathbf{c}_t),
+\end{align*}
 
-\section{Concluding remarks}\label{sec:conclusion}
-\input{conclusion}
+\section{Analysis \& Discussion}
 
-\section*{Acknowledgments}
-We thank Teresa B\"otschen, Nils Reimers and the anonymous reviewers for helpful comments.
-This work has been supported by the
-German Federal Ministry of Education and Research
-(BMBF) under the promotional reference
-01UG1816B (CEDIFOR).
+\paragraph{Winner statistics}
+
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}{ll}
+  \toprule
+    \best{} & \pentan{} (6), \swish{} (6), \\
+    & \elu{} (4), \relu{} (4), \lrelua{} (4)\\
+    \avg{} & \pentan{} (16), \mytanh{} (13)\\
+    & \mysin{} (10) \\
+  \bottomrule
+  \end{tabular}
+  \caption{Top-3 winner statistics. In brackets: number of times within top-3, keeping only functions with four or more top-3 rankings.}
+  \label{table:topN}
+\end{table}
+
+\paragraph{Influence of hyperparameters}
+
+\begin{align}\label{eq:regression}
+  y = \alpha_l\cdot\log(n_l)+\alpha_d\cdot d+\cdots
+\end{align}
+
+\section{Concluding remarks}
 
 \bibliography{emnlp2018-2}
+
 \bibliographystyle{acl_natbib}
 
-%\section*{Appendix}
 \appendix
-\input{appendix}
 
+\section{Supplemental Material}
+
+\begin{figure}[!htb]
+\scalebox{0.5}{
+\input{plots/saturating}}
+\scalebox{0.5}{
+\input{plots/non-saturating1}
+}
+\caption{Several activation functions.}
+\label{fig:saturating}
+\end{figure}
+
+\begin{figure}[!htb]
+\scalebox{0.5}{
+\input{plots/non-saturating2}}
+\scalebox{0.5}{
+\input{plots/non-saturating3}
+}
+\caption{Several activation functions.}
+\label{fig:nonsaturating}
+\end{figure}
 
 \end{document}

@@ -16,6 +16,8 @@
 \usepackage{color}
 
 \usepackage{verbatim}
+
+
 \newcommand\BibTeX{B{\sc ib}\TeX}
 
 \title{CAN: Constrained Attention Networks for Multi-Aspect Sentiment Analysis}
@@ -34,29 +36,31 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \section{Introduction}
 
 \begin{figure}
-\setlength{\abovecaptionskip}{0.2cm}    %调整图片标题与图距离
-\setlength{\belowcaptionskip}{-0.2cm}   %调整图片标题与下文距离
+\setlength{\abovecaptionskip}{0.2cm}
+\setlength{\belowcaptionskip}{-0.2cm}
 \centering
 \includegraphics[width=0.45\textwidth]{example.pdf}
-\caption{Example of a non-overlapping sentence.} 
-  \label{sentence} 
+\caption{Example of a non-overlapping sentence.}
+  \label{sentence}
 \end{figure}
 
 \begin{itemize}
 \vspace{-0.2cm}
 \item We propose CAN for multi-aspect sentiment analysis. Specifically, we introduce {\bf orthogonal} and {\bf sparse} regularizations to constrain the attention weight allocation, helping learn better aspect-specific sentence representations. To the best of our knowledge, this is the first work for multi-aspect sentiment analysis.
-\vspace{-0.2cm}
-\item We extend CAN to multi-task settings by introducing ACD as an auxiliary task, and applying CAN on  both ALSC and ACD tasks. 
+
 
 \vspace{-0.2cm}
-\item Extensive experiments are conducted on public datasets. Results demonstrate the effectiveness of our approach for aspect level sentiment classification.  
+\item We extend CAN to multi-task settings by introducing ACD as an auxiliary task, and applying CAN on  both ALSC and ACD tasks.
+
+\vspace{-0.2cm}
+\item Extensive experiments are conducted on public datasets. Results demonstrate the effectiveness of our approach for aspect level sentiment classification.
 \end{itemize}
 
 \section{Related Work}
 
 \begin{figure*}
-\setlength{\abovecaptionskip}{0.2cm}   %调整图片标题与图距离
-\setlength{\belowcaptionskip}{-0.3cm}   %调整图片标题与下文距离
+\setlength{\abovecaptionskip}{0.2cm}
+\setlength{\belowcaptionskip}{-0.3cm}
 \centering
 	\includegraphics[width=1.0\textwidth]{Big_network_new.pdf}
     \caption{Network Architecture. The aspect categories are embedded as vectors. The model encodes the sentence using LSTM. Based on its hidden states, aspect-specific sentence representations for ALSC and ACD tasks are learned via constrained attention. Then aspect level sentiment prediction and aspect category detection are made. }
@@ -69,33 +73,33 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 
 \subsection{LSTM Layer}
 
-\begin{equation} 
-\setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
-\setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
+\begin{equation}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
    h_l = LSTM(h_{l-1},v_l)
 \end{equation}
 
 \subsection{Task-Specific Attention Layer}
 
-\begin{equation} 
-\setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
-\setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
-    \alpha_k = softmax({z^a}^\mathrm{T}tanh(W_{1}^{a}{H} + W_{2}^{a}(u_k^{s}\otimes{e_L}))) 
+\begin{equation}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+    \alpha_k = softmax({z^a}^\mathrm{T}tanh(W_{1}^{a}{H} + W_{2}^{a}(u_k^{s}\otimes{e_L})))
   \label{equation_absa_att}
 \end{equation}
 
-\begin{equation} 
-\setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
-\setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
-    \beta_n = softmax({z^b}^\mathrm{T}tanh(W_{1}^{b}{H} + W_{2}^{b}(u_n\otimes{e_L}))) 
+\begin{equation}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+    \beta_n = softmax({z^b}^\mathrm{T}tanh(W_{1}^{b}{H} + W_{2}^{b}(u_n\otimes{e_L})))
   \label{equation_acd_att}
 \end{equation}
 
 \subsection{Regularization Layer}
 
-\begin{equation} 
-\setlength{\abovedisplayskip}{4pt}  % 公式与上文间距
-\setlength{\belowdisplayskip}{4pt}  % 公式与下文间距
+\begin{equation}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
     R_s = \mid\sum\limits_{l=1}^L{\alpha_{kl}^{2}} - 1\mid
     \label{equation:sparse_reg}
 \end{equation}
@@ -105,8 +109,8 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \subsection{Datasets}
 
 \begin{table}[t!]
-\setlength{\abovecaptionskip}{0.1cm}   %调整图片标题与图距离
-\setlength{\belowcaptionskip}{-0.4cm}   %调整图片标题与下文距离
+\setlength{\abovecaptionskip}{0.1cm}
+\setlength{\belowcaptionskip}{-0.4cm}
 \begin{center}
 \setlength{\tabcolsep}{1mm}{
 \begin{tabular} {|c|c|ccc|c|}
@@ -134,28 +138,27 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \item {\bf LSTM}: We implement the vanilla LSTM networks to model the sentence and use the average of all hidden states as the sentence representation. In this model, aspect information is not used.
 
 \vspace{-6pt}
-\item {\bf AT-LSTM} \cite{Wang2016Attention}: It adopts the attention mechanism in LSTM to generate a weighted representation of a sentence. The aspect embedding is used to compute the attention weights as in Equation \ref{equation_absa_att}. We do not concatenate the aspect embedding to the hidden state as in \cite{Wang2016Attention} and gain small performance improvement. We use this modified version of AT-LSTM in all experiments. 
+\item {\bf AT-LSTM} \cite{Wang2016Attention}: It adopts the attention mechanism in LSTM to generate a weighted representation of a sentence. The aspect embedding is used to compute the attention weights as in Equation \ref{equation_absa_att}. We do not concatenate the aspect embedding to the hidden state as in \cite{Wang2016Attention} and gain small performance improvement. We use this modified version of AT-LSTM in all experiments.
 
 \vspace{-6pt}
-\item {\bf ATAE-LSTM} \cite{Wang2016Attention}: This method is an extension of AT-LSTM. In this model, the aspect embedding is concatenated to each word embedding of the sentence as the input to the LSTM layer. 
+\item {\bf ATAE-LSTM} \cite{Wang2016Attention}: This method is an extension of AT-LSTM. In this model, the aspect embedding is concatenated to each word embedding of the sentence as the input to the LSTM layer.
 
 \end{itemize}
 
 \begin{table}[t!]
-\setlength{\abovecaptionskip}{0.0cm}   %调整图片标题与图距离
-\setlength{\belowcaptionskip}{-0.2cm}   %调整图片标题与下文距离
+\setlength{\abovecaptionskip}{0.0cm}
+\setlength{\belowcaptionskip}{-0.2cm}
 \begin{center}
 \setlength{\tabcolsep}{1.5mm}{
 \begin{tabular} {|c|cc|cc|}
 \hline
-	\multirow{2}{*}{Model} & \multicolumn{2}{c|}{Rest14} & \multicolumn{2}{c|}{Rest15} \\ 
+	\multirow{2}{*}{Model} & \multicolumn{2}{c|}{Rest14} & \multicolumn{2}{c|}{Rest15} \\
     \cline{2-5}
-    & 3-way & Binary & 3-way & Binary \\    
+    & 3-way & Binary & 3-way & Binary \\
 	\hline
-    LSTM      & 80.61 & 86.66 & 73.14 & 73.27 \\ 
+    LSTM      & 80.61 & 86.66 & 73.14 & 73.27 \\
     AT-LSTM   & 81.66 & 87.13 & 75.15 & 76.40 \\
     ATAE-LSTM & 82.08 & 87.72 & 74.32 & 76.79 \\
-    %AF-LSTM(CONV) & 81.29 & 87.26 & - & - \\
     \hline
     AT-CAN-$R_s$ & 81.97 & 88.08 & 75.74 & 80.05 \\
     AT-CAN-$R_o$ & 82.60 & 88.67 & 75.03 & 81.10 \\
@@ -170,8 +173,8 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \subsection{Results}
 
 \begin{figure}
-\setlength{\abovecaptionskip}{0.1cm}   %调整图片标题与图距离
-\setlength{\belowcaptionskip}{-0.2cm}   %调整图片标题与下文距离
+\setlength{\abovecaptionskip}{0.1cm}
+\setlength{\belowcaptionskip}{-0.2cm}
 \centering
 \subfigure[AT-LSTM]{
 \includegraphics[width=0.45\textwidth]{at_.pdf}}
@@ -186,21 +189,21 @@ Aspect level sentiment classification is a fine-grained sentiment analysis task,
 \end{figure}
 
 \begin{figure}
-\setlength{\abovecaptionskip}{0.1cm}   %调整图片标题与图距离
-\setlength{\belowcaptionskip}{-0.4cm}   %调整图片标题与下文距离
+\setlength{\abovecaptionskip}{0.1cm}
+\setlength{\belowcaptionskip}{-0.4cm}
 \centering
 \includegraphics[width=0.45\textwidth]{f3_.pdf}
-\caption{Visualization of attention weights of different aspects in the ACD task from M-CAN-2$R_o$. The a/m is short for anecdotes/miscellaneous.} 
-  \label{ACD-att} 
+\caption{Visualization of attention weights of different aspects in the ACD task from M-CAN-2$R_o$. The a/m is short for anecdotes/miscellaneous.}
+  \label{ACD-att}
 \end{figure}
 
 \begin{figure}
-\setlength{\abovecaptionskip}{0.1cm}   %调整图片标题与图距离
-\setlength{\belowcaptionskip}{-0.5cm}   %调整图片标题与下文距离
+\setlength{\abovecaptionskip}{0.1cm}
+\setlength{\belowcaptionskip}{-0.5cm}
 \centering
 \includegraphics[width=0.45\textwidth]{loss.pdf}
-\caption{The regularization loss curves of $R_s$ and $R_o$ during the training of AT-CAN-$R_o$.} 
-  \label{figure:reg-loss} 
+\caption{The regularization loss curves of $R_s$ and $R_o$ during the training of AT-CAN-$R_o$.}
+  \label{figure:reg-loss}
 \end{figure}
 
 \section{Conclusion}
