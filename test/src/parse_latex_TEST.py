@@ -18,6 +18,7 @@ try:
     EXP2 = open("../resources/ex2_expected.tex", 'r').read()
     COMM = open("../resources/with_comments_orig.tex", 'r').read()
     NO_COMM = open("../resources/commentes_removed_expected.tex", 'r').read()
+    MULTI = open("../resources/multiple_inputs_ex1_expected.tex").read()
 except IOError as e:
     sys.exit("Missing test files, cannot run tests: {}".format(e))
 
@@ -80,3 +81,8 @@ class TestParser(unittest.TestCase):
         extracted = pl.remove_comments(COMM)
 
         self.assertEqual(extracted, NO_COMM)
+
+    def test_multiple_inputs_and_overlap_rm(self):
+        self.maxDiff = None
+        replaced = pl.parser_main("../resources/1901", ret=True)
+        self.assertEqual(MULTI, replaced)
