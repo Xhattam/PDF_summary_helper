@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="arxiv-paper-summary-helper",
+    name="arxiv_summary_helper",
     version="0.0.1",
     author="Jessica Tanon",
     author_email="jessica.tanon@gmail.com",
