@@ -13,17 +13,29 @@ Keywords
 - python3
 
 
-Given an **arxiv** PDF link (e.g `https://arxiv.org/pdf/arxiv_article.pdf`) and a destination folder (e.g *my_new_dest_folder*), the script will try to download the PDF file *arxiv_article.pdf* , and search for latex sources (*arxiv_article_tex_src* will be created).
+Given an **arxiv** PDF link (e.g `https://arxiv.org/pdf/arxiv_article.pdf`), the script will try to download the PDF file *arxiv_article.pdf* , and search for latex sources (*arxiv_article_tex_src* will be created).
+
+The data will be placed in the `Downloads` folder.
 
 Sources are found
 =================
 The `arxiv_article_tex_src/arxiv_article.tex` file is parsed, and the following is extracted:
   - Begining of document until the Introduction section
-  - All sections/subsections names
-  - Specific latex parts (*itemize*, *enumerate*, *equation*, *table*, *figure*)
-  - Bibliography declaration
+  - All sections/subsections/paragraph/input names
+  - Specific latex parts (*itemize*, *enumerate*, *equation*, *table*, *figure*, *problem*)
+    - itemize
+    - equation
+    - enumerate
+    - table
+    - figure
+    - problem
+    - align
+    - layer1
+  - Bibliography/annexe declaration
  
 The content of the original `arxiv_article.tex` latex file **is replaced** with what was extracted, and formatted so that it can be built with `latex` right away (`pdflatex` command). *However*, the purpose is to take notes in this file, and compile it after, so that the notes are clean, in latex, and with the original PDF structure preserved.
+
+This script will go one level deep inside the main latex file, that is: look for \input commands, and retrieve the reference file content. The content is added to the main file, and parsed normally. Other deeper levels of \input are not processed, but simply added to the output tex file.
 
 Once the extraction is done, two subprocesses are called:
 - `evince`, to open the original PDF
@@ -62,11 +74,11 @@ from the **/src** folder :
 
 **Download, parse, and open documents:**
 
-`python3 arxiv_paper_helper.py https://arxiv.org/pdf/arxiv_article.pdf /home/my_new_dest_folder`
+`python3 arxiv_paper_helper.py https://arxiv.org/pdf/arxiv_article.pdf`
 
 **Download only:**
 
-`python3 download_arxiv_data.py https://arxiv.org/pdf/arxiv_article.pdf /home/my_new_dest_folder`
+`python3 download_arxiv_data.py https://arxiv.org/pdf/arxiv_article.pdf`
 
 **Parse and open files only (latex source folder required):**
 
