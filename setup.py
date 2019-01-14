@@ -16,6 +16,8 @@ setuptools.setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: Linux",
+        "Operating System :: Unix",
+        "Development Status :: Alpha",
+        "Topic :: Text Processing :: Markup :: LaTeX"
     ],
 )
