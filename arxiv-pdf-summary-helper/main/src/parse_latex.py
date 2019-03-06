@@ -17,7 +17,8 @@ TEX_FILE_PATH = ""
 def get_tex_path():
     """ Gets latex file abs path
 
-    :return: latex source file absolute path
+    :return : latex source file absolute path
+    :rtype  : str
     """
     return TEX_FILE_PATH
 
@@ -25,8 +26,10 @@ def get_tex_path():
 def get_sections(text):
     """ Finds all section and subsections names in the latex file
 
-    :param text: content of the latex file
-    :return: iterator with section/subsection/paragraph/input names, in latex format: `\section{section name}`
+    :param text : content of the latex file
+    :type text  : str
+    :return     : list of section/subsection/paragraph/input names, in latex format: `\section{section name}`
+    :rtype      : list of str
     """
     tmp = re.finditer(r"^\\(s(?:ubs){0,2}ection|paragraph|input){.*?}", text, re.MULTILINE)
     return [(e.start(), e.end(), e.group()) for e in tmp]
@@ -35,8 +38,10 @@ def get_sections(text):
 def get_figure(text):
     """ Extracts specific latex elements (currently, figure, itemize, equation, table and enumerate sections)
 
-    :param text: content of the latex file
-    :return: iterator with all specific elements and their content, in latex format
+    :param text : content of the latex file
+    :type text  : str
+    :return     : list with all specific latex elements and their content
+    :rtype      : str
     """
     patt = "|".join(["figure", "itemize", "equation", "table", "enumerate", "problem", "align", "layer1"])
     tmp = re.finditer(r'((?<!\\begin{comment})\s\\begin{(?P<sec>(?:' +
@@ -48,9 +53,12 @@ def get_figure(text):
 
 def remove_comments(text):
     """ Removes inline and general comments (indicated with %), while keeping literal %
+
     Also removes training whitespaces
-    :param text: latex file content
-    :return: content without comments
+    :param text : latex file content
+    :type text  : str
+    :return     : content without comments
+    :rtype      : str
     """
     no_comments = []
     lines = [l.rstrip(" ") for l in text.split("\n")]
@@ -72,7 +80,11 @@ def remove_comments(text):
 
 
 def get_appendix(text):
-    """ Extracts the appendix header (no content) """
+    """ Extracts the appendix header (no content)
+
+    :param text : latex file content
+    :type text  : str
+    """
     tmp = re.finditer(r'(^\\appendix$)', text, re.M)
     return [(e.start(), e.end(), e.group()) for e in tmp]
 
@@ -81,8 +93,10 @@ def get_all(text):
     """ Creates blueprint of original latex src
     Calls all extraction functions. Gets header, content, and references. Adds a `\end{document}` at the end
 
-    :param text: latex file content
-    :return: blueprint of latex source file, ready to be written to output and edited and/or compiled in latex
+    :param text : latex file content
+    :type text  : str
+    :return     : 'blueprint' of latex source file, ready to be written to output and edited and/or compiled in latex
+    :rtype      : str
     """
     text = remove_comments(text)
     sections = re.split(r'(\\section{.*})', text)
@@ -104,8 +118,10 @@ def remove_overlaps(results):
     Then, we search for \input sections. This \input will be matched twice
     Use the start/end of each match to remove overlapping elements
 
-    :param results: list of all parsed latex macros (ordered by regex match start index)
-    :returns: list of parsed latex macros, with overlaps removed
+    :param results  : list of all parsed latex macros (ordered by regex match start index)
+    :type results   : list of str
+    :return         : list of parsed latex macros, with overlaps removed
+    :rtype          : list of str
     """
     i = 0
     for e in results:
@@ -126,6 +142,12 @@ def is_contained(e1, e2):
 
     e2 is contained in e1 (shown in the start/end indices of the match)
     Each tuple is (match_start_index, match_end_index, string_matched)
+    :param e1   : regex-matched element
+    :type e1    : str
+    :param e2   : regex-matched element
+    :type e2    : str
+    :return     : True if e2 is contained in e1
+    :rtype      : bool
     """
     return e1[0] < e2[1] and e1[1] < e2[1]
 
@@ -133,8 +155,10 @@ def is_contained(e1, e2):
 def get_references(content):
     """ Extracts bibliography.
 
-    :param content: last section of the extracted latex file
-    :return: iterator containing each line matching \bilbio.*{.*}
+    :param content  : last section of the extracted latex file
+    :type content   : str
+    :return         : list containing each line matching \bilbio.*{.*}
+    :rtype          : list of str
     """
     tmp = re.finditer(r'\\biblio.*{.*}', content)
     return [(e.start(), e.end(), e.group()) for e in tmp]
@@ -143,8 +167,10 @@ def get_references(content):
 def parser_main(dl_path, ret=False):
     """ Finds tex source file. Parses its content. Overwrites source with blueprint.
 
-    :param dl_path: PDF URL
-    param ret: if true, returns extracted content (for tests)
+    :param dl_path  : PDF URL
+    :type dl_path   : str
+    :param ret      : if true, returns extracted content (for tests)
+    :type ret       : bool
     """
     files_list = [e for e in os.listdir(dl_path) if e.endswith(".tex")]
 
@@ -194,16 +220,21 @@ def concatenate_multiple_sources_into_one(multiple_inputs, main_tex):
 
         some more text
 
-    :param multiple_inputs: dictionary mapping an input name to its file content
-    :param main_tex: current content of the main latex file
-    :returns: main latex file with references to inputs replaced by inputs contents
+    :param multiple_inputs  : dictionary mapping an input name to its file content
+    :type multiple_inputs   : dict(str)
+    :param main_tex         : current content of the main latex file
+    :type main_tex          : str
+    :return                 : main latex file with references to inputs replaced by inputs contents
+    :rtype                  : str
     """
 
     def replace_input_ref_by_content(m):
         """ Returns content for a given input name
 
-        :param m: (implicit) matched group, name in \input macro
-        :returns: content of file referenced by \input{filename}
+        :param m    : (implicit) matched group, name in \input macro
+        :type m     : match object
+        :return     : content of file referenced by \input{filename}
+        :rtype      : str
         """
         return multiple_inputs[m.groups()[0]]
 

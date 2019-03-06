@@ -14,9 +14,8 @@ import sys
 def paper_helper_main(pdf_url):
     """ Calls download and parsing functions.
 
-    :param pdf_url: URL if PDF to download sources from, when possible
-    :param dest: name of folder to save download/results/PDF to
-    :return:
+    :param pdf_url  : URL if PDF to download sources from, when possible
+    :type pdf_url   : str
     """
     arxiv_downloader_main(pdf_url)
     dest_path = get_dest_path()

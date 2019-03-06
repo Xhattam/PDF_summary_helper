@@ -1,7 +1,0 @@
-README.md
-setup.py
-arxiv-pdf-summary-helper/__init__.py
-arxiv_summary_helper.egg-info/PKG-INFO
-arxiv_summary_helper.egg-info/SOURCES.txt
-arxiv_summary_helper.egg-info/dependency_links.txt
-arxiv_summary_helper.egg-info/top_level.txt

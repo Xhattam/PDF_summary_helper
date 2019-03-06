@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="arxiv_summary_helper",
-    version="0.0.1",
+    name="arxiv-pdf-summary-helper",
+    version="0.0.2",
     author="Jessica Tanon",
     author_email="jessica.tanon@gmail.com",
     description="A small package to help the note-taking process for arxiv papers",
@@ -17,7 +17,6 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: Unix",
-        "Development Status :: Alpha",
         "Topic :: Text Processing :: Markup :: LaTeX"
     ],
 )
